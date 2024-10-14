@@ -1,5 +1,5 @@
 --------------------------------------------------
--- Examples of MSTT programs and proofs of their properties
+-- Examples of non-modal proofs in BiSikkel
 --------------------------------------------------
 
 module Applications.NonModal.Examples where
@@ -24,7 +24,7 @@ private variable
 
 
 --------------------------------------------------
--- Proving some properties of natural number addition
+-- Defining and proving some properties of natural number addition
 
 id : Tm Γ (T ⇛ T)
 id = lam[ "x" ∈ _ ] svar "x"
@@ -35,12 +35,16 @@ plus-helper = lam[ "f" ∈ Nat' ⇛ Nat' ] (lam[ "n" ∈ Nat' ] suc (svar "f" �
 plus' : Tm Γ Nat' → Tm Γ (Nat' ⇛ Nat')
 plus' m = nat-rec id plus-helper m
 
+-- Definition of addition in MSTT
 plus : Tm Γ (Nat' ⇛ Nat' ⇛ Nat')
 plus = mk-global-def "plus" $ lam[ "m" ∈ Nat' ] plus' (svar "m")
 
+-- Semantics of plus in the presheaf model
 sem-plus : M.Tm M.◇ (M.Nat' M.⇛ M.Nat' M.⇛ M.Nat')
 sem-plus = ⟦ plus {◇} ⟧tm
 
+-- The function `plus` can be extracted to obtain addition of standard
+-- Agda natural numbers.
 _+_ : ℕ → ℕ → ℕ
 _+_ = extract-tm-◇ plus
 
@@ -54,6 +58,8 @@ suc' = lam[ "n" ∈ Nat' ] suc (svar "n")
 cong-suc : {Γ : Ctx ★} (m n : Tm Γ Nat') → Proof (Γ ,lock⟨ 𝟙 ⟩) → Proof Γ
 cong-suc m n p = trans (suc' ∙¹ m) by-normalization (trans (suc' ∙¹ n) (cong suc' p) by-normalization)
 
+
+-- We now prove some properties of the addition function `plus` using BiSikkel.
 
 -- ∀ n → plus n 0 = n
 plus-zeroʳ : ∀ {Γ} → bProp Γ
@@ -162,7 +168,7 @@ extract-plus-comm = extract-proof-◇ proof-plus-comm plus-comm
 
 
 --------------------------------------------------
--- Tests for α-equivalence
+-- Some tests for α-equivalence
 
 α-test-prop1 : bProp Γ
 α-test-prop1 = (lam[ "x" ∈ Bool' ] (lam[ "f" ∈ Bool' ⇛ Bool' ] svar "f" ∙ svar "x"))
@@ -207,7 +213,7 @@ extract-plus-comm = extract-proof-◇ proof-plus-comm plus-comm
 
 
 --------------------------------------------------
--- Tests for extraction
+-- Some tests for extraction
 
 extract-test1-prop : bProp {★} ◇
 extract-test1-prop =

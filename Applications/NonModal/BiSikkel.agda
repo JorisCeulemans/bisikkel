@@ -1,3 +1,9 @@
+--------------------------------------------------
+-- Trivial instance of BiSikkel with only 1 mode, 1 trivial modality
+-- and 1 trivial two-cell. There are no extra type or term
+-- constructors, no new bProp connectives and no new proof rules.
+--------------------------------------------------
+
 module Applications.NonModal.BiSikkel where
 
 open import Data.Empty
@@ -14,6 +20,11 @@ open import BiSikkel.MSTT.Parameter.TermExtension
 open import BiSikkel.MSTT.Parameter.TermExtensionSemantics
 open import BiSikkel.MSTT.Parameter.TermExtensionNormalization
 open import BiSikkel.MSTT.Parameter
+
+open import BiSikkel.Parameter.bPropExtension
+open import BiSikkel.Parameter.bPropExtensionSemantics
+open import BiSikkel.Parameter.ProofExtension
+open import BiSikkel.Parameter
 
 
 triv-mt : ModeTheory
@@ -77,12 +88,6 @@ MSTT-Parameter.𝓉 triv-mstt = triv-tm-ext
 MSTT-Parameter.⟦𝓉⟧ triv-mstt = triv-tm-ext-sem
 MSTT-Parameter.𝓉-norm triv-mstt = triv-tm-ext-norm
 
-
-
-open import BiSikkel.Parameter.bPropExtension
-open import BiSikkel.Parameter.bPropExtensionSemantics
-open import BiSikkel.Parameter.ProofExtension
-open import BiSikkel.Parameter
 
 
 triv-bp-ext : bPropExt triv-mt triv-ty-ext triv-tm-ext
