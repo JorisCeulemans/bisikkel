@@ -1,3 +1,8 @@
+--------------------------------------------------
+-- Specification of the new proof rules for unary parametricity
+-- (i.e. the param and extent-from primitives)
+--------------------------------------------------
+
 module Applications.UnaryParametricity.BiSikkel.ProofExtension where
 
 open import Data.List

@@ -1,6 +1,5 @@
 --------------------------------------------------
--- An example of representation independence using
--- unary parametricity
+-- Implementation of the semantics of unary parametricity
 --------------------------------------------------
 
 module Applications.UnaryParametricity.Model where

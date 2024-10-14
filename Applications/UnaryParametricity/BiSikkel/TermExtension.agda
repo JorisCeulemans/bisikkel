@@ -1,5 +1,5 @@
 --------------------------------------------------
--- Specification of new term constructors for parametricity
+-- Specification of new term constructors for unary parametricity
 --------------------------------------------------
 
 module Applications.UnaryParametricity.BiSikkel.TermExtension where

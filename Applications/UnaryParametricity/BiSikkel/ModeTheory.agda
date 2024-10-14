@@ -1,3 +1,7 @@
+--------------------------------------------------
+-- Mode theory for unary parametricity
+--------------------------------------------------
+
 module Applications.UnaryParametricity.BiSikkel.ModeTheory where
 
 open import Data.Maybe
@@ -11,6 +15,11 @@ open import BiSikkel.MSTT.Parameter.ModeTheory
 
 open import Applications.UnaryParametricity.Model as M hiding (π-cell)
 
+
+--------------------------------------------------
+-- Modes, note that we only have to specify the modes different from
+-- the trivial mode ★ (the latter one is always automatically included
+-- by BiSikkel).
 
 data NonTrivMode : Set where
   nt-↑ : NonTrivMode
@@ -33,6 +42,10 @@ pattern ↑ = ‵ nt-↑
 private variable
   m n o p : Mode
 
+
+--------------------------------------------------
+-- Modalities, again we only need to specify the non-trivial
+-- modalities (𝟙 is automatically added).
 
 data NonTrivModality : Mode → Mode → Set where
   nt-forget nt-Σ : NonTrivModality ↑ ★
@@ -62,6 +75,9 @@ pattern forget = ‵ nt-forget
 pattern Σ = ‵ nt-Σ
 
 
+--------------------------------------------------
+-- Composition of modalities
+
 _ⓜnon-triv_ : NonTrivModality n o → NonTrivModality m n → Modality m o
 nt-forget ⓜnon-triv ()
 nt-Σ ⓜnon-triv ()
@@ -87,6 +103,9 @@ MTCompositionLaws.mod-non-triv-assoc unary-param-mtc-laws = mod-non-triv-assoc
 
 open MTCompositionLaws unary-param-mtc-laws using (mod-assoc)
 
+
+--------------------------------------------------
+-- Two-cells
 
 data TwoCell : (μ ρ : Modality m n) → Set where
   idcl : TwoCell μ μ
@@ -168,6 +187,9 @@ MTTwoCellLaws.⟦ⓣ-vert⟧-sound unary-param-mt2-laws = ⟦ⓣ-vert⟧-sound
 MTTwoCellLaws.⟦ⓜ⟧-sound-natural unary-param-mt2-laws = ⟦ⓜ⟧-sound-natural
 MTTwoCellLaws.⟦associator⟧ unary-param-mt2-laws = ⟦associator⟧
 
+
+--------------------------------------------------
+-- The final mode theory record
 
 unary-param-mt : ModeTheory
 ModeTheory.mtm unary-param-mt = unary-param-mtm

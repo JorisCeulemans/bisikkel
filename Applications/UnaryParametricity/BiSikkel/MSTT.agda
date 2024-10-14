@@ -1,3 +1,7 @@
+--------------------------------------------------
+-- MSTT instance for unary parametricity
+--------------------------------------------------
+
 module Applications.UnaryParametricity.BiSikkel.MSTT where
 
 open import Data.Nat

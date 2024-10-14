@@ -1,3 +1,7 @@
+--------------------------------------------------
+-- Description of new bProp connectives for unary parametricity
+--------------------------------------------------
+
 module Applications.UnaryParametricity.BiSikkel.bPropExtension where
 
 open import Data.List
@@ -26,6 +30,9 @@ private variable
   m n : Mode
 
 
+-- Every type A at mode ↑ gives rise to a new bProp at mode ★, namely
+-- the statement that a term of type ⟨ forget ∣ A ⟩ satisfies the
+-- predicate encoded in A.
 data bPropExtCode : Mode → Set where
   bPred-code : (A : Ty ↑) → bPropExtCode ★
 

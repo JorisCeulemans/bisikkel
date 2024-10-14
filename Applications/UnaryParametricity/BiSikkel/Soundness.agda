@@ -1,3 +1,7 @@
+--------------------------------------------------
+-- Soundness proofs of the new proof rules for unary parametricity
+--------------------------------------------------
+
 module Applications.UnaryParametricity.BiSikkel.Soundness where
 
 open import Data.Product hiding (Σ)

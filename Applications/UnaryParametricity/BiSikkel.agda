@@ -1,3 +1,7 @@
+--------------------------------------------------
+-- BiSikkel instance for unary parametricity
+--------------------------------------------------
+
 module Applications.UnaryParametricity.BiSikkel where
 
 import Data.Nat.Properties as Nat

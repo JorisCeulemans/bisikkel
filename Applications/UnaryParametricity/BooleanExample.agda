@@ -1,9 +1,16 @@
+--------------------------------------------------
+-- Example using parametricity to show a simple representation
+-- independence result
+--------------------------------------------------
+
 module Applications.UnaryParametricity.BooleanExample where
 
 open import Data.Nat
 open import Data.Unit
+open import Relation.Binary.PropositionalEquality as Ag using (_≡_)
 
 open import Applications.UnaryParametricity.BiSikkel
+open import Applications.UnaryParametricity.Model hiding (π-cell)
 
 private variable
   m n : Mode
@@ -158,11 +165,11 @@ final-proof =
 final-test : IsOk (check-proof ◇ final-proof final-prop)
 final-test = tt
 
-open import Applications.UnaryParametricity.Model
-open import Relation.Binary.PropositionalEquality as Ag
 
+-- Extraction works, but is slow to compare the inferred type to the expected Agda type.
 final-test-extract : _
 final-test-extract = extract-proof-◇ final-proof final-prop {tt} {tt}
 
+-- Surprisingly, we can prove that the inferred type is the expected type in the following way.
 extract-correct-type : extract-bprop {◇} final-prop tt ≡ ((m n : ℕ) → IsBit m → IsBit n → IsBit (∨'-agda m n))
 extract-correct-type = Ag.refl
