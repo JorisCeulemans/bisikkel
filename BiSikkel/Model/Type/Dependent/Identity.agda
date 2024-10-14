@@ -1,3 +1,7 @@
+--------------------------------------------------
+-- The semantic identity type
+--------------------------------------------------
+
 open import BiSikkel.Model.BaseCategory
 
 module BiSikkel.Model.Type.Dependent.Identity {C : BaseCategory} where
@@ -17,6 +21,9 @@ private
     Δ Γ : Ctx C
     A B : Ty Γ
 
+
+--------------------------------------------------
+-- Definition of the identity type and some term formers
 
 Id : Tm Γ A → Tm Γ A → Ty Γ
 Id a b ⟨ x , γ ⟩ = a ⟨ x , γ ⟩' ≡ b ⟨ x , γ ⟩'
@@ -62,6 +69,10 @@ fun-cong' : {f g : Tm Γ (A ⇛ B)} → Tm Γ (Id f g) → (a : Tm Γ A) → Tm 
 fun-cong' {Γ} e a ⟨ x , γ ⟩' = cong (_$⟨ hom-id , ctx-id Γ ⟩ (a ⟨ x , γ ⟩')) (e ⟨ x , γ ⟩')
 Tm.naturality (fun-cong' e a) _ _ = uip _ _
 
+
+--------------------------------------------------
+-- Naturality and congruence proofs for the identity type
+
 Id-natural : (σ : Δ ⇒ Γ) {a b : Tm Γ A} → (Id a b) [ σ ] ≅ᵗʸ Id (a [ σ ]') (b [ σ ]')
 func (from (Id-natural σ {a = a} {b = b})) e = e
 _↣_.naturality (from (Id-natural σ {a = a} {b = b})) = refl
@@ -94,28 +105,16 @@ Id-cl-natural : {A : ClosedTy C} (clA : IsClosedNatural A) {a b : Tm Δ A} (σ :
                 (Id a b) [ σ ] ≅ᵗʸ Id (a [ clA ∣ σ ]cl) (b [ clA ∣ σ ]cl)
 Id-cl-natural clA σ = transᵗʸ (Id-natural σ) (Id-cong (closed-natural clA σ) (symᵗᵐ ι-symʳ) (symᵗᵐ ι-symʳ))
 
+
+--------------------------------------------------
+-- Providing a term of the identity type is equivalent to provint term
+-- equivalence (according to _≅ᵗᵐ_). In other words, the presheaf
+-- version of the identity type has equality reflection (if we take
+-- _≅ᵗᵐ_ to be the definitional equality).
+
 eq-reflect : {a b : Tm Γ A} → Tm Γ (Id a b) → a ≅ᵗᵐ b
 eq (eq-reflect e) {x = x} γ = e ⟨ x , γ ⟩'
 
 ≅ᵗᵐ-to-Id : {a b : Tm Γ A} → a ≅ᵗᵐ b → Tm Γ (Id a b)
 ≅ᵗᵐ-to-Id 𝒆 ⟨ x , γ ⟩' = eq 𝒆 γ
 Tm.naturality (≅ᵗᵐ-to-Id 𝒆) _ _ = uip _ _
-
-private
-  -- Example exploring how difficult it is to use subst'.
-  sym-via-subst : {a b : Tm Γ A} → Tm Γ (Id a b) → Tm Γ (Id b a)
-  sym-via-subst {Γ = Γ} {A = A} {a = a} {b = b} e =
-    ι⁻¹[ proof b ] (
-    subst' (Id ξ (a [ π ]'))
-           e
-           (ι[ proof a ] refl' a))
-    where
-      proof : (t : Tm Γ A) → (Id ξ (a [ π ]')) [ ⟨ id-subst Γ , t [ id-subst Γ ]' ∈ A ⟩ ] ≅ᵗʸ Id t a
-      proof t = transᵗʸ (Id-natural _)
-                        (transᵗʸ (Id-cong (transᵗʸ (ty-subst-comp A _ _)
-                                                   (ty-subst-cong-subst (ctx-ext-subst-β₁ _ _) A))
-                                          (ctx-ext-subst-β₂ _ _)
-                                          (transᵗᵐ (tm-subst-comp a _ _)
-                                                   (transᵗᵐ (ι-cong (tm-subst-cong-subst a (ctx-ext-subst-β₁ _ _)))
-                                                            (symᵗᵐ ι-trans))))
-                                 (Id-cong (ty-subst-id _) (tm-subst-id t) (tm-subst-id a)))

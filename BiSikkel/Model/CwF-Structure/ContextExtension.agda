@@ -27,7 +27,6 @@ private
 
 
 -- Definition of the extension of a context Γ with a type T.
--- In MLTT, this would be written as Γ, x : T.
 _,,_ : (Γ : Ctx C) (T : Ty Γ) → Ctx C
 (Γ ,, T) ⟨ x ⟩ = Σ[ γ ∈ Γ ⟨ x ⟩ ] (T ⟨ x , γ ⟩)
 (Γ ,, T) ⟪ f ⟫ [ γ , t ] = [ Γ ⟪ f ⟫ γ , T ⟪ f , refl ⟫ t ]
@@ -45,7 +44,7 @@ naturality π = refl
 ξ ⟨ _ , [ _ , t ] ⟩' = t
 naturality ξ _ refl = refl
 
--- In any cwf, there is by definition a one-to-one correspondence between substitutions
+-- In any CwF, there is by definition a one-to-one correspondence between substitutions
 -- Δ ⇒ Γ ,, T and pairs of type Σ[ σ : Δ ⇒ Γ ] (Tm Δ (T [ σ ])). This is worked out
 -- in the following functions.
 ext-subst-to-subst : (Δ ⇒ Γ ,, T) → (Δ ⇒ Γ)

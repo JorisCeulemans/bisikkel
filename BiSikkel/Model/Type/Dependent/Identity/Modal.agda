@@ -1,3 +1,8 @@
+--------------------------------------------------
+-- Congruence for the DRA introduction rule, expressed using the
+-- identity type
+--------------------------------------------------
+
 module BiSikkel.Model.Type.Dependent.Identity.Modal where
 
 open import BiSikkel.Model.BaseCategory

@@ -93,6 +93,8 @@ eq (naturality (to lift-compose-functor) σ) _ = refl
 eq (transf-op-eq (isoˡ lift-compose-functor)) _ = refl
 eq (transf-op-eq (isoʳ lift-compose-functor)) _ = refl
 
+
+-- Record expressing that a context functor arises as a lifted base functor
 record IsLiftedFunctor (Φ : CtxFunctor D C) : Set₁ where
   constructor is-lifted-functor
   field

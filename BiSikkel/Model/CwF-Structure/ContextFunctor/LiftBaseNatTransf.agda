@@ -1,3 +1,8 @@
+--------------------------------------------------
+-- Results about lifting natural transformations between base functors
+-- to natural transformations between context functors
+--------------------------------------------------
+
 module BiSikkel.Model.CwF-Structure.ContextFunctor.LiftBaseNatTransf where
 
 open import Data.Product renaming (_,_ to [_,_])
@@ -116,6 +121,7 @@ Inverse.inverse (lift-transf-iso F G) =
   ]
 
 
+-- The following is particularly useful when the base category C is a preorder
 lifted-functor-transf-eq : {Φ Ψ : CtxFunctor C D} (ilΦ : IsLiftedFunctor Φ) (ilΨ : IsLiftedFunctor Ψ)
                            {β β' : CtxNatTransf Φ Ψ} →
                            unlift-transf (Inverse.from (ctx-functor-iso-transf-iso (is-lifted ilΦ) (is-lifted ilΨ)) β)

@@ -10,6 +10,9 @@ open import Data.Unit using (⊤; tt)
 open import Relation.Binary.PropositionalEquality hiding (naturality)
 
 
+--------------------------------------------------
+-- Definition of base categories and preorders
+
 -- We only support small base categories with object and morphism types in Set₀.
 -- This is sufficient for the current applications like guarded recursion.
 record BaseCategory : Set₁ where
@@ -39,6 +42,9 @@ syntax category-composition C g f = g ∙[ C ] f
 IsPreorder : BaseCategory → Set
 IsPreorder C = {x y : Ob C} (f g : Hom C x y) → f ≡ g
 
+
+--------------------------------------------------
+-- Examples of base categories
 
 ω : BaseCategory
 Ob ω = ℕ
@@ -136,6 +142,10 @@ _∙_ (Type-groupoid X) y=z x=y = trans x=y y=z
 hom-idʳ (Type-groupoid X) = refl
 hom-idˡ (Type-groupoid X) = trans-reflʳ _
 
+
+--------------------------------------------------
+-- Definition and examples of base functors
+
 record BaseFunctor (C D : BaseCategory) : Set where
   no-eta-equality
   open BaseCategory
@@ -161,6 +171,9 @@ hom (base-functor-comp G F) f = hom G (hom F f)
 id-law (base-functor-comp G F) = trans (cong (hom G) (id-law F)) (id-law G)
 comp-law (base-functor-comp G F) = trans (cong (hom G) (comp-law F)) (comp-law G)
 
+
+--------------------------------------------------
+-- Definition and examples of natural transformations between base functors
 
 record BaseNatTransf {C D : BaseCategory} (F G : BaseFunctor C D) : Set where
   no-eta-equality
@@ -190,6 +203,10 @@ module _ {C D : BaseCategory} where
     ∙assoc D))))
 
 
+--------------------------------------------------
+-- Equivalence (i.e. pointwise equality) of natural transformations
+-- between base functors
+
 record _≅ᵇᵗ_ {C D : BaseCategory} {F G : BaseFunctor C D} (α β : BaseNatTransf F G) : Set where
   no-eta-equality
   open BaseCategory
@@ -212,6 +229,8 @@ module _ {C D : BaseCategory} {F G : BaseFunctor C D} where
   transf-op-eq (transᵇᵗ 𝓮 𝓮') x = trans (transf-op-eq 𝓮 x) (transf-op-eq 𝓮' x)
 
 
+-- Two natural transformations between base functors that have a
+-- preorder as codomain must be equivalent.
 preorder-nat-transf-irrelevant : {C D : BaseCategory} → IsPreorder D →
                                  {F G : BaseFunctor C D} {α β : BaseNatTransf F G} →
                                  α ≅ᵇᵗ β

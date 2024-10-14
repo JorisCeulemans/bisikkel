@@ -57,19 +57,6 @@ naturality (const-func₂ f ⟨ _ , _ ⟩' $⟨ _ , _ ⟩ _) = refl
 naturality (const-func₂ f ⟨ _ , _ ⟩') = to-pshfun-eq (λ _ _ _ → refl)
 naturality (const-func₂ f) _ _ = to-pshfun-eq (λ _ _ _ → refl)
 
-{-
--- The following works if C = ω. In general, it will work if C has a
--- terminal or initial object. These results are however never used,
--- and therefore not yet generalized.
-unconst : {A : Set 0ℓ} → Tm ◇ (Const A) → A
-unconst t = t ⟨ {!!} , lift tt ⟩'
-
-unconst-const : {A : Set 0ℓ} (a : A) → unconst (const a) ≡ a
-unconst-const a = refl
-
-const-unconst : {A : Set 0ℓ} (t : Tm ◇ (Const A)) → const (unconst t) ≅ᵗᵐ t
-eq (const-unconst t) _ = sym (naturality t z≤n refl)
--}
 
 Const-natural : (A : Set) (σ : Δ ⇒ Γ) → Const A [ σ ] ≅ᵗʸ Const A
 func (from (Const-natural A σ)) = id

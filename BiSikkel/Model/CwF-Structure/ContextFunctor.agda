@@ -85,9 +85,6 @@ instance
   ctx-map-id {{id-is-ctx-functor}} = reflˢ
   ctx-map-⊚ {{id-is-ctx-functor}} _ _ = reflˢ
 
--- This operation is not made available for instance resolution because otherwise
---   there would be infinitely many instances of IsCtxFunctor for any context
---   operation (by pre- or postcomposition with the identity operation).
 composed-functor : {C1 C2 C3 : BaseCategory} {Φ : CtxOp C2 C3} {Ψ : CtxOp C1 C2} →
                    IsCtxFunctor Φ → IsCtxFunctor Ψ → IsCtxFunctor (λ Γ → Φ (Ψ Γ))
 ctx-map {{composed-functor φ ψ}} σ = ctx-map {{φ}} (ctx-map {{ψ}} σ)
@@ -186,6 +183,10 @@ naturality (_ⓝ-hor_ {Φ = Φ} {Φ'} {Ψ} {Ψ'} η ζ) {Δ = Δ} {Γ} σ = begi
     ctx-fmap Φ' (ctx-fmap Ψ' σ) ⊚ ((transf-op η (ctx-op Ψ' Δ) ⊚ ctx-fmap Φ (transf-op ζ Δ))) ∎
   where open ≅ˢ-Reasoning
 
+
+--------------------------------------------------
+-- Equivalence (i.e. pointwise substitution equivalence) of natural
+-- transformations between context functors
 
 record _≅ᶜᵗ_ {Φ Ψ : CtxFunctor C D} (α β : CtxNatTransf Φ Ψ) : Set₁ where
   field
@@ -317,7 +318,7 @@ transf-op-eq (isoʳ (ⓕ-congˡ {Ψ = Ψ} {Ψ'} Ψ~Ψ')) =
 
 
 -- From a natural isomorphism between context functors, we can
--- construct Agda isomorphisms for the types of natural
+-- construct Agda isomorphisms for the Agda types of natural
 -- transformations to and from these functors.
 
 ctx-functor-iso-transf-isoʳ : {Φ Ψ Ψ' : CtxFunctor C D} → Ψ ≅ᶜᶠ Ψ' →

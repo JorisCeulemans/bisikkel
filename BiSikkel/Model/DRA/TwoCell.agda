@@ -27,7 +27,7 @@ infixl 20 _ⓣ-vert_
 -- Definition of a two-cell as a natural transformations between the underlying context functors
 
 -- TwoCell is defined as a record type so that Agda can better infer the two endpoint
---   modalities, e.g. in coe-ty.
+--   DRAs, e.g. in coe-ty.
 record TwoCell (μ ρ : DRA C D) : Set₁ where
   no-eta-equality
   constructor two-cell

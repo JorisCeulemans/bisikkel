@@ -1,3 +1,8 @@
+--------------------------------------------------
+-- Some properties of terms of constant presheaves, expressed using
+-- the semantic identity type
+--------------------------------------------------
+
 open import BiSikkel.Model.BaseCategory
 
 module BiSikkel.Model.Type.Dependent.Constant {C : BaseCategory} where

@@ -182,6 +182,10 @@ module _ {T : ClosedTy C} (clT : IsClosedNatural T) where
   ξcl : Tm (Γ ,, T) T
   ξcl = ι⁻¹[ closed-natural clT π ] ξ
 
+
+--------------------------------------------------
+-- A better version of substitution extenstion with a term of a closed type
+
 _,cl⟨_⟩_ : (Γ ⇒ Δ) → {T : ClosedTy C} → IsClosedNatural T → Tm Γ T → (Γ ⇒ Δ ,, T)
 σ ,cl⟨ clT ⟩ t = to-ext-subst _ σ (ι[ closed-natural clT σ ] t)
 
@@ -324,6 +328,7 @@ module _ {T : ClosedTy C} (clT : IsClosedNatural T) where
       lift-cl-subst σ ⊚ (id-subst _ ,cl⟨ clT ⟩ (t [ clT ∣ σ ]cl)) ∎
     where open ≅ˢ-Reasoning
 
+  -- Extending a context with a closed type gives rise to a context functor
   ,,-functor : CtxFunctor C C
   ctx-op ,,-functor Γ = Γ ,, T
   IsCtxFunctor.ctx-map (is-functor ,,-functor) = lift-cl-subst

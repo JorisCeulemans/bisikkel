@@ -1,5 +1,5 @@
 --------------------------------------------------
--- Equivalence of modalities
+-- Equivalence of DRAs
 --------------------------------------------------
 
 module BiSikkel.Model.DRA.Equivalence where
@@ -19,6 +19,10 @@ private
 
 infix 1 _≅ᵈ_
 
+
+--------------------------------------------------
+-- Two DRAs are considered equivalent if there are inverse two-cells
+-- between them.
 
 record _≅ᵈ_  {C D} (μ ρ : DRA C D) : Set₁ where
   no-eta-equality
@@ -72,6 +76,10 @@ from (lock-iso ℯ) = key-subst (to ℯ)
 to (lock-iso ℯ) = key-subst (from ℯ)
 isoˡ (lock-iso ℯ) = key-subst-eq (isoˡ ℯ)
 isoʳ (lock-iso ℯ) = key-subst-eq (isoʳ ℯ)
+
+
+--------------------------------------------------
+-- Equivalence of DRAs gives rise to equivalence of boxed types
 
 eq-dra-tyʳ : {μ ρ : DRA C D} (ℯ : μ ≅ᵈ ρ) {Γ : Ctx D} (T : Ty (Γ ,lock⟨ μ ⟩)) →
              ⟨ μ ∣ T ⟩ ≅ᵗʸ ⟨ ρ ∣ T [ key-subst (from ℯ) ] ⟩
@@ -176,6 +184,10 @@ eq-dra-ty-closed : {μ ρ : DRA C D} → μ ≅ᵈ ρ →
                    ⟨ μ ∣ A {Γ ,lock⟨ μ ⟩} ⟩ ≅ᵗʸ ⟨ ρ ∣ A ⟩
 eq-dra-ty-closed {ρ = ρ} ℯ {A} clA = transᵗʸ (eq-dra-tyʳ ℯ A) (dra-cong ρ (closed-natural clA _))
 
+
+--------------------------------------------------
+-- Connection between equivalence of DRAs and term formers
+
 eq-dra-intro : {μ ρ : DRA C D} (ℯ : μ ≅ᵈ ρ) {Γ : Ctx D} {T : Ty (Γ ,lock⟨ μ ⟩)}
                (t : Tm (Γ ,lock⟨ μ ⟩) T) →
                ι⁻¹[ eq-dra-tyʳ ℯ T ] (dra-intro μ t) ≅ᵗᵐ dra-intro ρ (t [ key-subst (from ℯ) ]')
@@ -214,6 +226,9 @@ eq-dra-elim-closed {μ = μ} {ρ} ℯ {T = T} clT t =
     dra-elim ρ (ι⁻¹[ transᵗʸ (eq-dra-tyʳ ℯ T) (dra-cong ρ (closed-natural clT (key-subst (from ℯ)))) ] t) ∎
   where open ≅ᵗᵐ-Reasoning
 
+
+--------------------------------------------------
+-- Category laws stated in terms of equivalence of DRAs
 
 𝟙-unitʳ : (μ : DRA C D) → μ ⓓ 𝟙 ≅ᵈ μ
 transf-op (transf (from (𝟙-unitʳ μ))) _ = id-subst _
@@ -291,6 +306,10 @@ isoʳ (ⓓ-congˡ μ ℯ) = begin
 -- proof of type equivalence.
 
 
+--------------------------------------------------
+-- We have a 2-category of base categories, DRAs and TwoCells.
+-- The following are proofs of the 2-category laws.
+
 module _ {μ ρ : DRA C D} (α : TwoCell μ ρ) where
   𝟙-unitʳ-natural-from : α ⓣ-vert from (𝟙-unitʳ μ) ≅ᵗᶜ from (𝟙-unitʳ ρ) ⓣ-vert (α ⓣ-hor id-cell)
   key-subst-eq 𝟙-unitʳ-natural-from = symˢ (id-subst-unitʳ _)
@@ -339,6 +358,9 @@ key-subst-eq 𝟙-unitˡ-unitʳ-from = reflˢ
 𝟙-unitˡ-unitʳ-to : to (𝟙-unitˡ (𝟙 {C})) ≅ᵗᶜ to (𝟙-unitʳ 𝟙)
 key-subst-eq 𝟙-unitˡ-unitʳ-to = reflˢ
 
+
+--------------------------------------------------
+-- Equivalence of DRAs and closed types
 
 eq-dra-closed : {μ ρ : DRA C D} → μ ≅ᵈ ρ →
                 {A : ClosedTy C} (clA : IsClosedNatural A) →
