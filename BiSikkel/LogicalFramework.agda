@@ -1,3 +1,8 @@
+--------------------------------------------------
+-- Bundling of the entire logical framework, parametrized by a BiSikkelParameter
+-- Note that MSTT has to be imported separately.
+--------------------------------------------------
+
 open import BiSikkel.Parameter
 
 module BiSikkel.LogicalFramework
