@@ -1,3 +1,7 @@
+--------------------------------------------------
+-- The proof checking monad
+--------------------------------------------------
+
 module BiSikkel.LogicalFramework.Proof.CheckingMonad where
 
 open import Data.Empty
@@ -29,7 +33,7 @@ infixl 4 _<$>_ _<*>_
 infixl 1 _>>=_ _>>_
 
 -- Functor, Applicative and Monad instances of PCM (since this is the
--- only monad we work with, we do not make use of instance arguments).
+-- only monad we work with, we do not make use of instance arguments)
 _<$>_ : (A → B) → PCM A → PCM B
 f <$> (ok a)      = ok (f a)
 f <$> (error msg) = error msg
@@ -59,6 +63,8 @@ from-maybe msg (just a) = return a
 from-maybe msg nothing  = throw-error msg
 
 
+-- Type expressing that a run of the proof checker was successful
+-- (i.e. did not cause any errors)
 IsOk : PCM A → Set
 IsOk (ok a)      = ⊤
 IsOk (error msg) = ⊥

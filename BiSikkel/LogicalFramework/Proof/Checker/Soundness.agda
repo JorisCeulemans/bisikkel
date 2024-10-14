@@ -1,3 +1,7 @@
+--------------------------------------------------
+-- Soundness proofs for all built-in BiSikkel inference rules
+--------------------------------------------------
+
 open import BiSikkel.MSTT.Parameter
 open import BiSikkel.Parameter.bPropExtension
 open import BiSikkel.Parameter.bPropExtensionSemantics
@@ -91,16 +95,6 @@ to-ctx-/-commute-𝟙 {T = T} Ξ φ t =
   M.transᵗʸ (to-ctx-/-commute Ξ φ t) (
   M.ty-subst-cong-subst (M./cl-cong-cl (𝟙-preserves-cl (ty-closed-natural T))) _)
 
--- Todo: the soundness proofs for nat-induction and mod-induction can
--- probably be simplified by using the following lemma
--- to-ctx-//-commute : (Ξ : ProofCtx m) (φ : bProp (to-ctx (Ξ ,,ᵛ ρ ∣ y ∈ S)))
---                     (s : Tm (to-ctx Ξ ,, μ ∣ x ∈ T ,lock⟨ ρ ⟩) S) →
---                     ⟦ φ [ s // y ]bprop ⟧bprop M.[ to-ctx-subst (Ξ ,,ᵛ μ ∣ x ∈ T) ]
---                       M.≅ᵗʸ
---                     (⟦ φ ⟧bprop M.[ to-ctx-subst (Ξ ,,ᵛ ρ ∣ y ∈ S) ])
---                       M.[ dra-intro ⟦ ρ ⟧mod (⟦ s ⟧tm M.[ ty-closed-natural S ∣ to-ctx-subst ((Ξ ,,ᵛ μ ∣ x ∈ T) ,lock⟨ ρ ⟩) ]cl)
---                           M.//cl⟨ ty-closed-natural ⟨ ρ ∣ S ⟩ ⟩ ]
--- to-ctx-//-commute Ξ φ s = {!!}
 
 module _ (Ξ : ProofCtx m) where
   refl-sound : (t1 t2 : Tm (to-ctx Ξ) T) →

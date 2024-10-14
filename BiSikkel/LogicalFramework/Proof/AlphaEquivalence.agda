@@ -1,3 +1,8 @@
+--------------------------------------------------
+-- Semi-decision procedure for α-equivalence of MSTT programs (_≟tm_)
+-- and bProps (_≟bprop_)
+--------------------------------------------------
+
 open import BiSikkel.MSTT.Parameter
 open import BiSikkel.Parameter.bPropExtension
 open import BiSikkel.Parameter.bPropExtensionSemantics using (bPropExtSem)
@@ -46,8 +51,17 @@ private variable
   x y : String
 
 
--- Testing for α-equivalence
-
+-- Since variables in MSTT appear in the context with a name, there is
+-- a non-trivial notion of α-equivalence of contexts. E.g. if we want
+-- to check whether `lam[ μ ∣ x ∈ A ] t` and `lam[ μ ∣ y ∈ A ] s` are
+-- α-equivalent, we need to recursively check that t and s are
+-- α-equivalent, but they are terms in contexts whose last variables
+-- have a different name (but the same type). Therefore, our
+-- α-equivalence procedure allows to test two terms that live in
+-- different contexts that are α-equivalent. To state the evidence
+-- when the procedure succeeds, we need a semantic substitution
+-- between the two contexts (which will in fact always be the identity
+-- substitution).
 data AlphaEquivCtx : (Γ Δ : Ctx m) → Set where
   ◇ : ∀ {m} → AlphaEquivCtx (◇ {m}) ◇
   _,,_∣_ : {Γ Δ : Ctx n} → AlphaEquivCtx Γ Δ → (μ : Modality m n) {x y : Name} (T : Ty m) →
@@ -99,7 +113,9 @@ var-α-equiv {x = x} {y = y} {Λ = Λ} (vzero {Γ = Γ1} α1) (vzero {Γ = Γ2} 
   return (vzero-sem-lift-sub Γ2 Γ1 μ x y T Λ α1 (alpha-equiv-sub eΓ))
 var-α-equiv {T = T} {Λ = Λ} (vsuc v1)  (vsuc v2)  (eΓ ,, ρ ∣ S) = do
   ev ← var-α-equiv v1 v2 eΓ
-  return (M.transᵗᵐ (M.cl-tm-subst-cong-subst-2-2 (ty-closed-natural T) (lock-fmap-cong-2-2 ⟦ locksˡᵗ Λ ⟧mod (M.lift-cl-subst-π-commute (ty-closed-natural ⟨ ρ ∣ S ⟩))))
+  return (M.transᵗᵐ (M.cl-tm-subst-cong-subst-2-2
+                       (ty-closed-natural T)
+                       (lock-fmap-cong-2-2 ⟦ locksˡᵗ Λ ⟧mod (M.lift-cl-subst-π-commute (ty-closed-natural ⟨ ρ ∣ S ⟩))))
                     (M.cl-tm-subst-cong-tm (ty-closed-natural T) ev))
 var-α-equiv {T = T} {Λ = Λ} (vlock v1) (vlock v2) (eΓ ,lock⟨ ρ ⟩) = do
   ev ← var-α-equiv v1 v2 eΓ

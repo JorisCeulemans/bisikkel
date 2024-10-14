@@ -1,5 +1,5 @@
 --------------------------------------------------
--- Definition of BiSikkel propositions and their substitution
+-- Definition of BiSikkel propositions (bProps) and their substitution
 --------------------------------------------------
 
 open import BiSikkel.MSTT.Parameter
@@ -40,7 +40,6 @@ infix 12 _≡ᵇ_
 --------------------------------------------------
 -- Definition of BiSikkel propositions
 
--- TODO: include connective for disjunction and existential quantification.
 data bProp {m} (Γ : Ctx m) : Set
 ExtBPArgs : {m : Mode} (arginfos : List (ArgInfo m)) → ArgBoundNames arginfos → Ctx m → Set
 

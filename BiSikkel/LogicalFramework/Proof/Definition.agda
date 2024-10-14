@@ -34,20 +34,14 @@ private variable
   x y : Name
 
 
+--------------------------------------------------
+-- Definition of a data type of proofs
+-- These proofs are not necessarily valid and still need to be checked.
+
 data Proof : {m : Mode} → Ctx m → Set
 ExtPfArgs : {m : Mode} (pfarg-infos : List (ArgInfo m)) → ArgBoundNames pfarg-infos → Ctx m → Set
 
 data Proof where
-  {-
-  TODO: Primitive for applying a 2-cell to a proof (and consequently also to the prosposition it proves).
-        This would subsume all constructors below.
-  -- Functoriality of the locks in a proof context
-  lock𝟙-der : (Ξ ⊢ φ) → (Ξ ,lock⟨ 𝟙 ⟩ ⊢ lock𝟙-bprop φ)
-  unlock𝟙-der : (Ξ ,lock⟨ 𝟙 ⟩ ⊢ φ) → (Ξ ⊢ unlock𝟙-bprop φ)
-  fuselocks-der : (Ξ ,lock⟨ μ ⟩ ,lock⟨ ρ ⟩ ⊢ φ) → (Ξ ,lock⟨ μ ⓜ ρ ⟩ ⊢ fuselocks-bprop φ)
-  unfuselocks-der : (Ξ ,lock⟨ μ ⓜ ρ ⟩ ⊢ φ) → (Ξ ,lock⟨ μ ⟩ ,lock⟨ ρ ⟩ ⊢ unfuselocks-bprop φ)
-  -}
-
   -- Structural rules for ≡ᵇ
   refl : Proof Γ  -- Ξ ⊢ t ≡ᵇ t
   sym : Proof Γ  -- Ξ ⊢ t ≡ᵇ s
@@ -168,6 +162,26 @@ ExtPfArgs (info ∷ infos) (arg-names , args-names) Γ =
   Proof (Γ ++tel (add-names (arg-tel info) arg-names)) × ExtPfArgs infos args-names Γ
 
 
+--------------------------------------------------
+-- More useful versions of the induction principles for Bool', Nat'
+-- and modal types.
+bool-induction : {Γ : Ctx m} {x : String} →
+                 Proof Γ → Proof Γ → Proof (Γ ,, x ∈ Bool')
+bool-induction = bool-induction' Ag.refl
+
+nat-induction : {Γ : Ctx m} {x : String} (hyp : String) →
+                Proof Γ → Proof (Γ ,, x ∈ Nat') → Proof (Γ ,, x ∈ Nat')
+nat-induction hyp = nat-induction' hyp Ag.refl
+
+mod-induction : {Γ : Ctx m} (κ : Modality o n) (μ : Modality n m) (x : Name) {y : Name} →
+                Proof (Γ ,, μ ⓜ κ ∣ x ∈ T) → Proof (Γ ,, μ ∣ y ∈ ⟨ κ ∣ T ⟩)
+mod-induction κ μ x = mod-induction' κ μ x Ag.refl
+
+
+--------------------------------------------------
+-- Some convenience functions for constructing equality proofs using
+-- the normalizer
+
 by-normalization : Proof Γ
 by-normalization = with-normalization refl
 
@@ -193,21 +207,8 @@ with-normalizationʳ t2' p = trans t2' p by-normalization
 with-normalizationᵇ : (t1' t2' : Tm Γ T) → Proof Γ → Proof Γ
 with-normalizationᵇ t1' t2' p = trans t1' by-normalization (trans t2' p by-normalization)
 
--- More useful versions of the induction principles for Bool', Nat'
--- and modal types.
-bool-induction : {Γ : Ctx m} {x : String} →
-                 Proof Γ → Proof Γ → Proof (Γ ,, x ∈ Bool')
-bool-induction = bool-induction' Ag.refl
 
-nat-induction : {Γ : Ctx m} {x : String} (hyp : String) →
-                Proof Γ → Proof (Γ ,, x ∈ Nat') → Proof (Γ ,, x ∈ Nat')
-nat-induction hyp = nat-induction' hyp Ag.refl
-
-mod-induction : {Γ : Ctx m} (κ : Modality o n) (μ : Modality n m) (x : Name) {y : Name} →
-                Proof (Γ ,, μ ⓜ κ ∣ x ∈ T) → Proof (Γ ,, μ ∣ y ∈ ⟨ κ ∣ T ⟩)
-mod-induction κ μ x = mod-induction' κ μ x Ag.refl
-
-
+--------------------------------------------------
 -- Equational reasoning with BiSikkel proofs
 module ≡ᵇ-Reasoning where
 

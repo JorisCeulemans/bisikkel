@@ -1,3 +1,7 @@
+--------------------------------------------------
+-- Proof contexts
+--------------------------------------------------
+
 open import BiSikkel.MSTT.Parameter
 open import BiSikkel.Parameter.bPropExtension
 open import BiSikkel.Parameter.bPropExtensionSemantics
@@ -29,7 +33,15 @@ private variable
   x y : Name
 
 
--- A proof context can, apart from MSTT variables, also consist of propositions (assumptions).
+--------------------------------------------------
+-- Definition of proof contexts
+
+-- A proof context can, apart from MSTT variables, also consist of
+-- propositions (i.e. assumptions).  Since these propositions live in
+-- a particular context, the inductive type ProofCtx is defined via
+-- induction-recursion with a function `to-ctx`, which removes all
+-- assumptions from a proof context and returns the resulting MSTT
+-- context.
 data ProofCtx (m : Mode) : Set
 to-ctx : ProofCtx m → Ctx m
 
@@ -48,6 +60,9 @@ to-ctx (Ξ ,lock⟨ μ ⟩)   = (to-ctx Ξ) ,lock⟨ μ ⟩
 private variable
   Ξ : ProofCtx m
 
+
+--------------------------------------------------
+-- Assumptions (representation and lookup procedure)
 
 -- In the same way as variables in MSTT, assumptions are internally
 --  referred to using De Bruijn indices, but we keep track of their
@@ -112,6 +127,11 @@ contains-assumption? {n = m} x (_,,ᵇ_∣_∈_ {n = n} Ξ μ y φ) Λ with x St
 contains-assumption? x (Ξ ,lock⟨ μ ⟩)    Λ = alock <$> contains-assumption? x Ξ (lock⟨ μ ⟩, Λ)
 
 
+--------------------------------------------------
+-- Interpretation of proof contexts as presheaves
+
+-- In order to interpret assumptions, we need a semantic substitution
+-- from ⟦ Ξ ⟧pctx to ⟦ to-ctx Ξ ⟧ctx.
 ⟦_⟧pctx : ProofCtx m → SemCtx ⟦ m ⟧mode
 to-ctx-subst : (Ξ : ProofCtx m) → ⟦ Ξ ⟧pctx M.⇒ ⟦ to-ctx Ξ ⟧ctx
 

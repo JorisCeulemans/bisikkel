@@ -1,5 +1,5 @@
 --------------------------------------------------
--- Module that re-exports all definitions involving predicates on MSTT programs
+-- Module that re-exports all definitions involving bProps
 --------------------------------------------------
 
 open import BiSikkel.MSTT.Parameter

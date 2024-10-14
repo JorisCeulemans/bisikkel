@@ -1,3 +1,8 @@
+--------------------------------------------------
+-- Soundness proof for substitution in bProps
+-- The central result in this file is bprop-rensub-sound.
+--------------------------------------------------
+
 open import BiSikkel.MSTT.Parameter
 open import BiSikkel.Parameter.bPropExtension
 open import BiSikkel.Parameter.bPropExtensionSemantics using (bPropExtSem)

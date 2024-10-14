@@ -1,3 +1,7 @@
+--------------------------------------------------
+-- The BiSikkel proof checker
+--------------------------------------------------
+
 open import BiSikkel.Parameter
 
 module BiSikkel.LogicalFramework.Proof.Checker
@@ -41,6 +45,9 @@ private variable
 proof-fuel : Fuel
 proof-fuel = 1000000
 
+-- check-proof-explicit-constraint is used as a helper for
+-- check-proof-ext (checking user-defined proofs in particular
+-- instances of BiSikkel).
 check-proof : (Ξ : ProofCtx m) → Proof (to-ctx Ξ) → (φ : bProp (to-ctx Ξ)) → PCM (PCResult Ξ φ)
 check-proof-explicit-constraint : (Ξ : ProofCtx m) {Γ : Ctx m} → to-ctx Ξ Ag.≡ Γ →
                                   Proof Γ → (φ : bProp (to-ctx Ξ)) →
@@ -137,7 +144,6 @@ check-proof Ξ (∀-intro[_∣_∈_]_ {n = n} μ x T p) φ = do
   refl ← n ≟mode n'
   refl ← μ ≟mod κ
   refl ← from-dec "Names should match when proving proposition of the form ∀[ μ ∣ x ∈ T ] φ" (x Str.≟ y)
-  -- TODO: Should we allow the names to differ and just rename the proposition?
   refl ← T ≟ty S
   ⟅ goals , ⟦p⟧ ⟆ ← check-proof (Ξ ,,ᵛ μ ∣ x ∈ T) p φ'
   return ⟅ goals , sgoals ↦ ∀-intro-sound Ξ x T φ' (⟦p⟧ sgoals) ⟆

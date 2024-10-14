@@ -1,3 +1,9 @@
+--------------------------------------------------
+-- Upon success the proof checker outputs a list of goals and
+-- conditional semantic evidence of the proof (given semantic values
+-- for all goals)
+--------------------------------------------------
+
 open import BiSikkel.MSTT.Parameter
 open import BiSikkel.Parameter.bPropExtension
 open import BiSikkel.Parameter.bPropExtensionSemantics
@@ -65,6 +71,7 @@ pc-result = ⟅_,_⟆
 syntax pc-result goals (λ sgoals → b) = ⟅ goals , sgoals ↦ b ⟆
 
 
+-- Type expressing that the output of a proof check does not contain any goals
 ContainsNoGoals : PCResult Ξ φ → Set
 ContainsNoGoals ⟅ []    , _ ⟆ = ⊤
 ContainsNoGoals ⟅ _ ∷ _ , _ ⟆ = ⊥

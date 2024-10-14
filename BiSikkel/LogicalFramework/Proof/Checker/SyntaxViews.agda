@@ -1,3 +1,9 @@
+--------------------------------------------------
+-- In some cases when checking a proof, we need to make sure that a
+-- term or a proposition is of a particular form. The functions in
+-- this file are used for that purpose.
+--------------------------------------------------
+
 open import BiSikkel.MSTT.Parameter
 open import BiSikkel.Parameter.bPropExtension
 open import BiSikkel.Parameter.bPropExtensionSemantics
@@ -85,7 +91,7 @@ data IsSucTm : Tm Γ T → Set where
 
 is-suc-tm? : (t : Tm Γ T) → PCM (IsSucTm t)
 is-suc-tm? (suc n) = return (suc-tm n)
-is-suc-tm? _ = throw-error "successor of natural number expected"
+is-suc-tm? _ = throw-error "Successor of natural number expected"
 
 data IsGlobalDef : Tm Γ T → Set where
   global-def : {Γ : Ctx m} (name : DefName) (t : Tm ◇ T) → IsGlobalDef {Γ = Γ} (global-def name {t})

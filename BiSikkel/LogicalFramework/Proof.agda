@@ -1,3 +1,7 @@
+--------------------------------------------------
+-- Module that re-exports all definitions involving Proofs
+--------------------------------------------------
+
 open import BiSikkel.Parameter
 
 module BiSikkel.LogicalFramework.Proof
