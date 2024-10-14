@@ -1,0 +1,4 @@
+name: bisikkel
+include: BiSikkel
+depend: standard-library
+flags: --guardedness
