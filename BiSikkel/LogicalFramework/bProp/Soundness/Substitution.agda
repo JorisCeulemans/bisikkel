@@ -1,0 +1,151 @@
+open import BiSikkel.MSTT.Parameter
+open import BiSikkel.Parameter.bPropExtension
+open import BiSikkel.Parameter.bPropExtensionSemantics using (bPropExtSem)
+
+module BiSikkel.LogicalFramework.bProp.Soundness.Substitution
+  (𝒫 : MSTT-Parameter) (let open MSTT-Parameter 𝒫)
+  (𝒷 : bPropExt ℳ 𝒯 𝓉) (⟦𝒷⟧ : bPropExtSem ℳ 𝒯 𝓉 𝒷)
+  where
+
+open import Data.List
+open import Data.Product
+open import Data.Unit.Polymorphic
+
+open import BiSikkel.Model.CwF-Structure as M renaming (Ctx to SemCtx; Ty to SemTy) using ()
+open import BiSikkel.Model.DRA as DRA using (dra-natural; dra-cong)
+import BiSikkel.Model.Type.Function as M
+import BiSikkel.Model.Type.Product as M
+import BiSikkel.Model.Type.Constant as M
+import BiSikkel.Model.Type.Dependent.Identity as M
+import BiSikkel.Model.Type.Dependent.Function as M
+
+open import BiSikkel.MSTT 𝒫
+open import BiSikkel.MSTT.Soundness.Substitution ℳ 𝒯 𝓉 ⟦𝓉⟧
+open import BiSikkel.LogicalFramework.bProp.Syntax 𝒫 𝒷
+open import BiSikkel.LogicalFramework.bProp.Interpretation 𝒫 𝒷 ⟦𝒷⟧
+open BiSikkel.Parameter.bPropExtensionSemantics ℳ 𝒯 𝓉 hiding (bPropExtSem)
+open import BiSikkel.Parameter.ArgInfo ℳ 𝒯
+
+open bPropExtSem ⟦𝒷⟧
+
+private variable
+  m n o : Mode
+  Γ Δ : Ctx m
+
+
+module bPropTraversalSoundness
+  (Trav : ∀ {m} → Ctx m → Ctx m → Set)
+  (trav-struct : TravStruct Trav)
+  (trav-struct-sound : TravStructSoundness trav-struct)
+  where
+
+  open TravStruct trav-struct
+  open TravStructSoundness trav-struct-sound
+  open bPropTraversal Trav trav-struct
+
+  traverse-bprop-sound : (φ : bProp Δ) (σ : Trav Γ Δ) →
+                         ⟦ φ ⟧bprop M.[ ⟦ σ ⟧trav ] M.≅ᵗʸ ⟦ traverse-bprop φ σ ⟧bprop
+  traverse-ext-bpargs-sound : ∀ {arginfos} {bparg-names} (args : ExtBPArgs arginfos bparg-names Δ) (σ : Trav Γ Δ) →
+                              semprops-subst ⟦ args ⟧bpextargs ⟦ σ ⟧trav
+                                ≅ᵇᵖˢ
+                              ⟦ traverse-ext-bpargs args σ ⟧bpextargs
+
+  traverse-bprop-sound ⊤ᵇ σ = M.Const-natural _ ⟦ σ ⟧trav
+  traverse-bprop-sound ⊥ᵇ σ = M.Const-natural _ ⟦ σ ⟧trav
+  traverse-bprop-sound (_≡ᵇ_ {T = T} t1 t2) σ =
+    M.transᵗʸ (M.Id-cl-natural (ty-closed-natural T) ⟦ σ ⟧trav) (M.Id-cong' (traverse-tm-sound t1 σ) (traverse-tm-sound t2 σ))
+  traverse-bprop-sound (⟨ μ ∣ φ ⟩⊃ ψ) σ =
+    M.transᵗʸ (M.⇛-natural ⟦ σ ⟧trav)
+              (M.⇛-cong (M.transᵗʸ (dra-natural ⟦ μ ⟧mod ⟦ σ ⟧trav)
+                                   (dra-cong ⟦ μ ⟧mod (M.transᵗʸ (M.ty-subst-cong-subst (lock-sound σ μ) _) (traverse-bprop-sound φ (lock σ)))))
+                        (traverse-bprop-sound ψ σ))
+  traverse-bprop-sound (φ ∧ ψ) σ =
+    M.transᵗʸ (M.⊠-natural ⟦ σ ⟧trav) (M.⊠-cong (traverse-bprop-sound φ σ) (traverse-bprop-sound ψ σ))
+  traverse-bprop-sound (∀[ μ ∣ x ∈ T ] φ) σ =
+    M.transᵗʸ (M.Pi-natural-closed-dom (ty-closed-natural ⟨ μ ∣ T ⟩) ⟦ σ ⟧trav)
+              (M.Pi-cong-cod (M.transᵗʸ (M.ty-subst-cong-subst (lift-sound {μ = μ} {x = x} {T = T} σ) _)
+                                        (traverse-bprop-sound φ (lift σ))))
+  traverse-bprop-sound ⟨ μ ∣ φ ⟩ σ =
+    M.transᵗʸ (dra-natural ⟦ μ ⟧mod ⟦ σ ⟧trav)
+              (dra-cong ⟦ μ ⟧mod (M.transᵗʸ (M.ty-subst-cong-subst (lock-sound σ μ) _) (traverse-bprop-sound φ (lock σ))))
+  traverse-bprop-sound (ext c tmarg-names tmargs bparg-names bpargs) σ =
+    M.transᵗʸ (apply-sem-prop-constructor-natural ⟦ c ⟧bp-code ⟦ σ ⟧trav (⟦⟧bp-code-natural c) ⟦ tmargs ⟧tmextargs ⟦ bpargs ⟧bpextargs)
+              (apply-sem-prop-constructor-cong ⟦ c ⟧bp-code (⟦⟧bp-code-cong c) (traverse-ext-tmargs-sound tmargs σ) (traverse-ext-bpargs-sound bpargs σ))
+
+  traverse-ext-bpargs-sound {arginfos = []}          _ σ = tt
+  traverse-ext-bpargs-sound {arginfos = arginfo ∷ _} (arg , args) σ =
+    M.transᵗʸ (M.ty-subst-cong-subst-2-2 ⟦ arg ⟧bprop (lift-trav-tel-sound σ (arg-tel arginfo)))
+              (M.ty-subst-cong-ty _ (traverse-bprop-sound arg _))
+    ,
+    traverse-ext-bpargs-sound args σ
+
+
+module bPropRenSubSoundness
+  (V : RenSubData)
+  (rensub-struct : RenSubDataStructure V)
+  (⟦_⟧rensubdata : RenSubDataSemantics V)
+  (rensub-struct-sound : RenSubDataStructureSound V rensub-struct ⟦_⟧rensubdata)
+  where
+
+  open AtomicRenSub V rensub-struct
+  open RenSub V rensub-struct
+  open RenSubSemantics V ⟦_⟧rensubdata
+  open AtomicRenSubSoundness V rensub-struct ⟦_⟧rensubdata rensub-struct-sound
+
+  open bPropRenSub V rensub-struct
+  open bPropTraversalSoundness AtomicRenSub AtomicRenSubTrav AtomicRenSubTravSound
+
+  bprop-arensub-sound : (φ : bProp Δ) (σ : AtomicRenSub Γ Δ) →
+                        ⟦ φ ⟧bprop M.[ ⟦ σ ⟧arensub ] M.≅ᵗʸ ⟦ φ [ σ ]bpropᵃ ⟧bprop
+  bprop-arensub-sound = traverse-bprop-sound
+
+  bprop-rensub-sound : (φ : bProp Δ) (σ : RenSub Γ Δ) →
+                       ⟦ φ ⟧bprop M.[ ⟦ σ ⟧rensub ] M.≅ᵗʸ ⟦ φ [ σ ]bpropʳˢ ⟧bprop
+  bprop-rensub-sound φ id = M.ty-subst-id _
+  bprop-rensub-sound φ (id ⊚a τᵃ) = bprop-arensub-sound φ τᵃ
+  bprop-rensub-sound φ (σ@(_ ⊚a _) ⊚a τᵃ) =
+    M.transᵗʸ (M.symᵗʸ (M.ty-subst-comp _ _ _))
+              (M.transᵗʸ (M.ty-subst-cong-ty _ (bprop-rensub-sound φ σ)) (bprop-arensub-sound (φ [ σ ]bpropʳˢ) τᵃ))
+
+
+module bPropRenSoundness = bPropRenSubSoundness RenData AtomicRenVar.ren-data-struct ren-data-semantics AtomicRenVarSound.ren-data-struct-sound
+open bPropRenSoundness renaming
+  ( bprop-arensub-sound to bprop-aren-sound
+  ; bprop-rensub-sound to bprop-ren-sound
+  ) public
+
+module bPropSubSoundness = bPropRenSubSoundness SubData AtomicSubVar.sub-data-struct sub-data-semantics AtomicSubVarSound.sub-data-struct-sound
+open bPropSubSoundness renaming
+  ( bprop-arensub-sound to bprop-asub-sound
+  ; bprop-rensub-sound to bprop-sub-sound
+  ) public
+
+
+lock𝟙-bprop-sound : (φ : bProp Γ) → ⟦ lock𝟙-bprop φ ⟧bprop M.≅ᵗʸ ⟦ φ ⟧bprop
+lock𝟙-bprop-sound {Γ = Γ} φ =
+  M.transᵗʸ (M.symᵗʸ (bprop-ren-sound φ lock𝟙-ren)) (
+  M.transᵗʸ (M.ty-subst-cong-subst (lock𝟙-ren-sound Γ) _) (
+  M.ty-subst-id _))
+
+unlock𝟙-bprop-sound : (φ : bProp (Γ ,lock⟨ 𝟙 ⟩)) → ⟦ unlock𝟙-bprop φ ⟧bprop M.≅ᵗʸ ⟦ φ ⟧bprop
+unlock𝟙-bprop-sound {Γ = Γ} φ =
+  M.transᵗʸ (M.symᵗʸ (bprop-ren-sound φ unlock𝟙-ren)) (
+  M.transᵗʸ (M.ty-subst-cong-subst (unlock𝟙-ren-sound Γ) _) (
+  M.ty-subst-id _))
+
+unfuselocks-bprop-sound : {μ : Modality n o} {ρ : Modality m n} (φ : bProp (Γ ,lock⟨ μ ⓜ ρ ⟩)) →
+                          ⟦ unfuselocks-bprop {ρ = ρ} φ ⟧bprop M.≅ᵗʸ ⟦ φ ⟧bprop M.[ M.to (DRA.lock-iso (⟦ⓜ⟧-sound μ ρ)) ]
+unfuselocks-bprop-sound {Γ = Γ} {μ = μ} {ρ} φ =
+  M.transᵗʸ (M.symᵗʸ (bprop-ren-sound φ (unfuselocks-ren {μ = μ} {ρ = ρ})))
+            (M.ty-subst-cong-subst (unfuselocks-ren-sound μ ρ Γ) _)
+
+fuselocks-bprop-sound : {μ : Modality n o} {ρ : Modality m n} (φ : bProp (Γ ,lock⟨ μ ⟩ ,lock⟨ ρ ⟩)) →
+                        ⟦ fuselocks-bprop φ ⟧bprop M.≅ᵗʸ ⟦ φ ⟧bprop M.[ M.from (DRA.lock-iso (⟦ⓜ⟧-sound μ ρ)) ]
+fuselocks-bprop-sound {Γ = Γ} {μ = μ} {ρ = ρ} φ  =
+  M.transᵗʸ (M.symᵗʸ (bprop-ren-sound φ fuselocks-ren))
+            (M.ty-subst-cong-subst (fuselocks-ren-sound μ ρ Γ) _)
+
+fuselocks-bprop-sound-to : {μ : Modality n o} {ρ : Modality m n} (φ : bProp (Γ ,lock⟨ μ ⟩ ,lock⟨ ρ ⟩)) →
+                           ⟦ fuselocks-bprop φ ⟧bprop M.[ M.to (DRA.lock-iso (⟦ⓜ⟧-sound μ ρ)) ] M.≅ᵗʸ ⟦ φ ⟧bprop
+fuselocks-bprop-sound-to {Γ = Γ} {μ = μ} {ρ = ρ} φ =
+  M.transᵗʸ (M.ty-subst-cong-ty _ (fuselocks-bprop-sound φ)) (M.ty-subst-cong-subst-2-0 _ (DRA.key-subst-eq (DRA.isoʳ (⟦ⓜ⟧-sound μ ρ))))
