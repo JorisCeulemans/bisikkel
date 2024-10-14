@@ -200,6 +200,8 @@ iterate-iterate'-proof A =
 test-iterate-iterate'-proof : IsOk (check-proof ◇ (iterate-iterate'-proof Nat') (iterate-iterate' Nat'))
 test-iterate-iterate'-proof = tt
 
+test-iterate-iterate'-extract : _
+test-iterate-iterate'-extract = extract-proof ◇ (iterate-iterate'-proof Nat') (iterate-iterate' Nat') tt
 
 
 -- Two very simple examples showcasing proof extraction (Agda is too
