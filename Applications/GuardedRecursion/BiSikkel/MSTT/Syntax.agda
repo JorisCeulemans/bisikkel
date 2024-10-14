@@ -1,3 +1,8 @@
+--------------------------------------------------
+-- Definition of the syntax for new MSTT type and term constructors
+-- for guarded type theory
+--------------------------------------------------
+
 {-# OPTIONS --guardedness #-}
 
 module Applications.GuardedRecursion.BiSikkel.MSTT.Syntax where

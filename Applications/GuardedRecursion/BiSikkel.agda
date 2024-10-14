@@ -1,3 +1,7 @@
+--------------------------------------------------
+-- BiSikkel instance for guarded recursion
+--------------------------------------------------
+
 {-# OPTIONS --guardedness #-}
 
 module Applications.GuardedRecursion.BiSikkel where

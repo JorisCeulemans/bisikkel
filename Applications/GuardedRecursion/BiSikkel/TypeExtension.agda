@@ -1,3 +1,7 @@
+--------------------------------------------------
+-- Specification of the new type constructor for guarded recursion
+--------------------------------------------------
+
 {-# OPTIONS --guardedness #-}
 
 module Applications.GuardedRecursion.BiSikkel.TypeExtension where

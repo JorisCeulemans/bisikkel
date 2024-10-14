@@ -1,3 +1,7 @@
+--------------------------------------------------
+-- Soundness proofs of the new proof rules for guarded recursion
+--------------------------------------------------
+
 {-# OPTIONS --guardedness #-}
 
 module Applications.GuardedRecursion.BiSikkel.Soundness where

@@ -1,3 +1,7 @@
+-- No new bProp connectives are necessary for the guarded recursion
+-- instance, so we let the type of codes `bPropExtCode` be the empty
+-- type.
+
 {-# OPTIONS --guardedness #-}
 
 module Applications.GuardedRecursion.BiSikkel.bPropExtension where

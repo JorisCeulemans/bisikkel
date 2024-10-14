@@ -1,3 +1,9 @@
+--------------------------------------------------
+-- Results about vectors and definition of coinductive Agda streams
+-- that are used in the semantics of the BiSikkel instance for guarded
+-- recursion
+--------------------------------------------------
+
 {-# OPTIONS --guardedness #-}
 
 module Applications.GuardedRecursion.Preliminaries where
@@ -115,9 +121,11 @@ record Bisimilar {ℓ} {A : Set ℓ} (s1 s2 : Stream A) : Set ℓ where
 open Bisimilar public
 
 
+--------------------------------------------------
 -- We show that streams are isomorphic to growing sequences of vectors
 -- (satisfying the necessary naturality condition), under the
 -- assumption of stream extensionality.
+
 record GrowingVec {ℓ} (A : Set ℓ) : Set ℓ where
   constructor growing-vec
   field
@@ -191,9 +199,11 @@ stream-gv-stream-bisimilar : (s : Stream A) →
 stream-gv-stream-bisimilar s = take-equal-bisimilar (stream-gv-stream-take s)
 
 
+--------------------------------------------------
 -- Stream extensionality should only be used in the isomorphism below,
 -- nowhere else in the library. Only the extraction mechanism for
 -- streams relies on this principle.
+
 postulate
   streamext : ∀ {ℓ} {A : Set ℓ} {s1 s2 : Stream A} → Bisimilar s1 s2 → s1 ≡ s2
 

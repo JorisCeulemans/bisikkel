@@ -1,3 +1,8 @@
+--------------------------------------------------
+-- Implementation of normalization for the new guarded recursion term
+-- constructors
+--------------------------------------------------
+
 {-# OPTIONS --guardedness #-}
 
 module Applications.GuardedRecursion.BiSikkel.Normalization where

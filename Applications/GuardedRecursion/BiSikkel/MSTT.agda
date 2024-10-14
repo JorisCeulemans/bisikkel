@@ -1,3 +1,7 @@
+--------------------------------------------------
+-- MSTT instance for guarded recursive type theory
+--------------------------------------------------
+
 {-# OPTIONS --guardedness #-}
 
 module Applications.GuardedRecursion.BiSikkel.MSTT where
@@ -59,6 +63,7 @@ omega-limit-gstream-growvec-iso A = mk↔ₛ′
                                trans (Vec.map-cong (Inverse.strictlyInverseʳ (extract-ty-iso {A})) _) (
                                Vec.map-id _))))
 
+-- ExtractableTy instance for standard streams
 instance
   stream-extractable : {A : Ty ★} → {{ExtractableTy A}} →
                        ExtractableTy ⟨ forever ∣ GStream A ⟩

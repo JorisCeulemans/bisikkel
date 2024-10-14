@@ -1,3 +1,7 @@
+--------------------------------------------------
+-- Mode theory for guarded recursion
+--------------------------------------------------
+
 module Applications.GuardedRecursion.BiSikkel.ModeTheory where
 
 open import Data.Maybe
@@ -15,6 +19,11 @@ import Applications.GuardedRecursion.Model.Modalities as M
 open import BiSikkel.MSTT.Parameter.ModeTheory
 
 
+
+--------------------------------------------------
+-- Modes, note that we only have to specify the modes different from
+-- the trivial mode ★ (the latter one is always automatically included
+-- by BiSikkel).
 
 data NonTrivMode : Set where
   nt-ω : NonTrivMode
@@ -38,6 +47,13 @@ private variable
   m n o p : Mode
   k l : ℕ
 
+
+--------------------------------------------------
+-- Modalities, again we only need to specify the non-trivial
+-- modalities (𝟙 is automatically added). The description below makes
+-- sure that every modality in guarded type theory has a unique
+-- representative. Therefore, we do not add composition as a
+-- constructor. The later modality is e.g. constructed as `later^[1+ 0 ]`.
 
 data NonTrivModality : Mode → Mode → Set where
   nt-forever : NonTrivModality ω ★
@@ -80,6 +96,9 @@ pattern constantly = ‵ later^[ 0 ]ⓜconstantly
 pattern forever = ‵ nt-forever
 
 
+--------------------------------------------------
+-- Composition of modalities
+
 _ⓜnon-triv_ : NonTrivModality n o → NonTrivModality m n → Modality m o
 nt-forever ⓜnon-triv later^[ k ]ⓜconstantly = 𝟙
 nt-forever ⓜnon-triv later^[1+ k ] = forever
@@ -92,7 +111,8 @@ later^[ k ]ⓜconstantlyⓜforever ⓜnon-triv later^[ l ]ⓜconstantly = ‵ la
 later^[ k ]ⓜconstantlyⓜforever ⓜnon-triv later^[1+ l ] = ‵ later^[ k ]ⓜconstantlyⓜforever
 later^[ k ]ⓜconstantlyⓜforever ⓜnon-triv later^[ l ]ⓜconstantlyⓜforever = ‵ later^[ k ]ⓜconstantlyⓜforever
 
-⟦ⓜ⟧-non-triv-sound : (μ : NonTrivModality n o) (κ : NonTrivModality m n) → ⟦ μ ⓜnon-triv κ ⟧mod ≅ᵈ ⟦ μ ⟧non-triv-mod ⓓ ⟦ κ ⟧non-triv-mod
+⟦ⓜ⟧-non-triv-sound : (μ : NonTrivModality n o) (κ : NonTrivModality m n) →
+                     ⟦ μ ⓜnon-triv κ ⟧mod ≅ᵈ ⟦ μ ⟧non-triv-mod ⓓ ⟦ κ ⟧non-triv-mod
 ⟦ⓜ⟧-non-triv-sound nt-forever later^[ zero ]ⓜconstantly = symᵈ M.forever-constantly
 ⟦ⓜ⟧-non-triv-sound nt-forever later^[ suc l ]ⓜconstantly =
   transᵈ (symᵈ M.forever-constantly) (
@@ -190,6 +210,12 @@ MTCompositionLaws.mod-non-triv-assoc guarded-mtc-laws = mod-non-triv-assoc
 
 open MTCompositionLaws guarded-mtc-laws using (mod-assoc)
 
+
+--------------------------------------------------
+-- Two-cells, every two-cell has a unique representative (so the mode
+-- theory for guarded recursion is effectively a poset-enriched
+-- category). The identity two-cell is not automatically added but
+-- implemented later on.
 
 data TwoCell : (μ ρ : Modality m n) → Set where
   id𝟙 : ∀ {m} → TwoCell (𝟙 {m}) 𝟙
@@ -308,6 +334,16 @@ MTTwoCell.⟦_⟧two-cell guarded-mt2 = ⟦_⟧two-cell
 open MTTwoCell guarded-mt2 using (eq-cell)
 
 
+--------------------------------------------------
+-- Proving some soundness properties for two-cells. In order to do
+-- this, we make use of the fact that semantically all lock functors
+-- arising from modalities in guarded type theory are liftings of
+-- functors between base categories. Therefore all two-cell
+-- transformations arise as liftings from natural transformations
+-- between those base functors. Since the involved base categories are
+-- preorders, there can be at most 1 two-cell between any 2 such
+-- functors.
+
 mode-is-preorder : (m : Mode) → IsPreorder ⟦ m ⟧mode
 mode-is-preorder ★ = ★-is-preorder
 mode-is-preorder ω = ω-is-preorder
@@ -390,6 +426,9 @@ MTTwoCellLaws.⟦ⓣ-vert⟧-sound guarded-mt2-laws = ⟦ⓣ-vert⟧-sound
 MTTwoCellLaws.⟦ⓜ⟧-sound-natural guarded-mt2-laws = ⟦ⓜ⟧-sound-natural
 MTTwoCellLaws.⟦associator⟧ guarded-mt2-laws = ⟦associator⟧
 
+
+--------------------------------------------------
+-- The final mode theory record
 
 guarded-mt : ModeTheory
 ModeTheory.mtm guarded-mt = guarded-mtm

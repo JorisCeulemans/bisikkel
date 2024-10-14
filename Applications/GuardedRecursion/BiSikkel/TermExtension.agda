@@ -1,3 +1,7 @@
+--------------------------------------------------
+-- Specification of the new term constructors for guarded recursion
+--------------------------------------------------
+
 {-# OPTIONS --guardedness #-}
 
 module Applications.GuardedRecursion.BiSikkel.TermExtension where

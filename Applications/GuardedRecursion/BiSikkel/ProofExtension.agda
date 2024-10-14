@@ -1,3 +1,9 @@
+--------------------------------------------------
+-- Specification of the new proof rules for guarded recursion (i.e. a
+-- β-rule for löb-induction of terms and a version of löb-induction
+-- for proofs)
+--------------------------------------------------
+
 {-# OPTIONS --guardedness #-}
 
 module Applications.GuardedRecursion.BiSikkel.ProofExtension where

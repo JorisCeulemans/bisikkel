@@ -1,3 +1,7 @@
+--------------------------------------------------
+-- Examples defining streams/stream functions in BiSikkel
+--------------------------------------------------
+
 {-# OPTIONS --guardedness #-}
 
 module Applications.GuardedRecursion.Examples.Streams where
@@ -15,6 +19,9 @@ private variable
   Γ Δ : Ctx m
   A B : Ty m
 
+
+--------------------------------------------------
+-- Definition of map and two versions of iterate for guarded streams
 
 g-map : Tm Γ (⟨ constantly ∣ A ⇛ B ⟩⇛ GStream A ⇛ GStream B)
 g-map {A = A} {B} =
@@ -40,12 +47,16 @@ g-iterate' {A = A} = lam[ later ⓜ constantly ∣ "f" ∈ A ⇛ A ]
            (svar "it" ∙ (svar "f" ∙ var "a" (𝟙≤ltr ⓣ-hor id-cell {μ = constantly})))
 
 
+--------------------------------------------------
+-- Definition of a stream of zeros
+
 g-zeros : Tm Γ (GStream Nat')
 g-zeros = löb[later∣ "zeros" ∈ GStream Nat' ] g-cons zero (svar "zeros")
 
 Stream' : Ty ★ → Ty ★
 Stream' A = ⟨ forever ∣ GStream A ⟩
 
+-- The use of mk-global-def helps extraction
 zeros : Tm Γ (Stream' Nat')
 zeros = mk-global-def "zeros" $
   mod⟨ forever ⟩ g-zeros
@@ -56,6 +67,10 @@ zeros-extract = extract-tm-◇ zeros
 test-zeros-extract :
   take 10 zeros-extract ≡ 0 ∷ 0 ∷ 0 ∷ 0 ∷ 0 ∷ 0 ∷ 0 ∷ 0 ∷ 0 ∷ 0 ∷ []
 test-zeros-extract = Ag.refl
+
+
+--------------------------------------------------
+-- Enumerating all natural numbers
 
 nats : Tm Γ (Stream' Nat')
 nats = mk-global-def "nat" $
@@ -68,6 +83,9 @@ nats-extract-test :
   take 10 nats-extract ≡ 0 ∷ 1 ∷ 2 ∷ 3 ∷ 4 ∷ 5 ∷ 6 ∷ 7 ∷ 8 ∷ 9 ∷ []
 nats-extract-test = Ag.refl
 
+
+--------------------------------------------------
+-- Version of head and 2 implementations of iterate for standard streams
 
 head' : Tm Γ (Stream' A ⇛ A)
 head' {A = A} =
@@ -84,6 +102,7 @@ iterate' : Tm Γ ((A ⇛ A) ⇛ A ⇛ Stream' A)
 iterate' {A = A} = mk-global-def "iterate'" (
   lam[ "f" ∈ A ⇛ A ] (lam[ "a" ∈ A ] (mod⟨ forever ⟩ (g-iterate' ∙ svar "f" ∙ svar "a"))))
 
+-- Extraction of both iterate functions
 iterateℕ iterate'ℕ : (ℕ → ℕ) → ℕ → Stream ℕ
 iterateℕ = extract-tm-◇ (iterate {A = Nat'})
 iterate'ℕ = extract-tm-◇ (iterate' {A = Nat'})
