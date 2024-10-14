@@ -1,3 +1,7 @@
+--------------------------------------------------
+-- Some basic programs for working in modal type theory
+--------------------------------------------------
+
 open import BiSikkel.MSTT.Parameter.ModeTheory
 open import BiSikkel.MSTT.Parameter.TypeExtension
 open import BiSikkel.MSTT.Parameter.TermExtension

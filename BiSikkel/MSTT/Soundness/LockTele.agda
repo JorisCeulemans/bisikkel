@@ -1,3 +1,8 @@
+--------------------------------------------------
+-- Soundness results about lock telescopes, mainly used in the
+-- soundness proof for substitution
+--------------------------------------------------
+
 open import BiSikkel.MSTT.Parameter.ModeTheory
 open import BiSikkel.MSTT.Parameter.TypeExtension
 open import BiSikkel.MSTT.Parameter.TermExtension

@@ -1,3 +1,7 @@
+--------------------------------------------------
+-- Fueled normalization for MSTT (sound by construction)
+--------------------------------------------------
+
 open import BiSikkel.MSTT.Parameter
 
 module BiSikkel.MSTT.Normalization

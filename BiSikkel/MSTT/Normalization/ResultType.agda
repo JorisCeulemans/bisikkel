@@ -1,3 +1,9 @@
+--------------------------------------------------
+-- The result of normalization will be an MSTT term, together with
+-- semantic evidence that the interpretation of the original and the
+-- normalized terms are equivalent.
+--------------------------------------------------
+
 open import BiSikkel.MSTT.Parameter.ModeTheory
 open import BiSikkel.MSTT.Parameter.TypeExtension
 open import BiSikkel.MSTT.Parameter.TermExtension

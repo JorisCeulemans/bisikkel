@@ -1,3 +1,8 @@
+--------------------------------------------------
+-- Specification of how new term constructors should be interpreted in
+-- a presheaf model and proofs of congruence and naturality
+--------------------------------------------------
+
 open import BiSikkel.MSTT.Parameter.ModeTheory
 open import BiSikkel.MSTT.Parameter.TypeExtension
 
@@ -24,6 +29,9 @@ open ModeTheory ℳ
 private variable
   m n : Mode
 
+
+--------------------------------------------------
+-- Definition of a semantic term constructor and its properties
 
 -- A SemTmConstructorLocal refers to an MSTT context and not a
 -- semantic context. This has the advantage that it corresponds to the
@@ -71,6 +79,9 @@ SemTmConstructorCong : {arginfos : List (TmArgInfo m)} {T : Ty m} →
 SemTmConstructorCong {m = m} f = {Γ : Ctx m} → SemTmConstructorLocalCong (f {Γ})
 
 
+--------------------------------------------------
+-- Record collecting all information about semantics for new term constructors
+
 record TmExtSem (𝓉 : TmExt) : Set where
   no-eta-equality
   field
@@ -78,6 +89,10 @@ record TmExtSem (𝓉 : TmExt) : Set where
     ⟦⟧tm-code-natural : ∀ {m} (c : TmExtCode 𝓉 m) → SemTmConstructorNatural ⟦ c ⟧tm-code
     ⟦⟧tm-code-cong : ∀ {m} (c : TmExtCode 𝓉 m) → SemTmConstructorCong ⟦ c ⟧tm-code
 
+
+--------------------------------------------------
+-- Helper proofs for naturality and congruence when applied in the
+-- interpretation of actual MSTT terms
 
 SemTms : List (TmArgInfo m) → Ctx m → Set
 SemTms []                   Γ = ⊤

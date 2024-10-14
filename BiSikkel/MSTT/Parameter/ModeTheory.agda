@@ -1,3 +1,8 @@
+--------------------------------------------------
+-- Description of an M(S)TT mode theory
+--------------------------------------------------
+
+
 module BiSikkel.MSTT.Parameter.ModeTheory where
 
 open import Data.Maybe using (Maybe)
@@ -10,6 +15,11 @@ open import BiSikkel.Model.DRA as DRA hiding (𝟙; TwoCell; id-cell; _ⓣ-vert_
 open import BiSikkel.LogicalFramework.Proof.CheckingMonad
 
 
+--------------------------------------------------
+-- Modes
+-- Note that a user must only specify mode different from the trivial
+-- mode ★. The latter is autmatically included.
+
 record MTMode : Set₁ where
   no-eta-equality
   field
@@ -19,7 +29,9 @@ record MTMode : Set₁ where
       --   interpretation of the trivial mode is definitionally the
       --   trivial base category.
     non-triv-mode-eq? : (m n : NonTrivMode) → Maybe (m ≡ n)
+      -- ^ Semi-decision procedure for propositional equality of modes
     ⟦_⟧non-triv-mode : NonTrivMode → BaseCategory
+      -- ^ Interpretation of modes as base categories
 
   data Mode : Set where
     ★ : Mode
@@ -39,6 +51,15 @@ record MTMode : Set₁ where
   ⟦ ‵ m ⟧mode = ⟦ m ⟧non-triv-mode
 
 
+--------------------------------------------------
+-- Modalities
+-- Note that we include some form of strictification: a user does not
+-- need to specify the unit modality 𝟙, only the non-trivial
+-- modalities. The unit modality is automatically included. This way,
+-- the interpretation of the unit modality is definitionally the
+-- semantic unit modality, and 𝟙 is definitionally a left unit of
+-- modality composition ⓜ.
+
 record MTModality (mtm : MTMode) : Set₁ where
   no-eta-equality
 
@@ -46,14 +67,10 @@ record MTModality (mtm : MTMode) : Set₁ where
 
   field
     NonTrivModality : Mode → Mode → Set
-      -- ^ A modality is either the unit modality 𝟙 or a non-trivial modality
-      --   described above. This treatment allows for some more definitional
-      --   equalities (e.g. the interpretation of the unit modality is
-      --   definitionally the semantic unit modality, and 𝟙 is definitionally
-      --   a left unit of modality composition ⓜ).
-
     non-triv-mod-eq? : ∀ {m n} (μ κ : NonTrivModality m n) → Maybe (μ ≡ κ)
+      -- ^ Semi-decision procedure for propositional equality of modalities
     ⟦_⟧non-triv-mod : ∀ {m n} → NonTrivModality m n → DRA ⟦ m ⟧mode ⟦ n ⟧mode
+      -- ^ Interpretation of modalities as DRAs
 
   infix 50 ‵_
   data Modality : Mode → Mode → Set where
@@ -80,6 +97,9 @@ record MTModality (mtm : MTMode) : Set₁ where
   _ ≟mod _ = throw-error modality-msg
 
 
+--------------------------------------------------
+-- Composition of modalities
+
 record MTComposition (mtm : MTMode) (mtμ : MTModality mtm) : Set₁ where
   no-eta-equality
 
@@ -91,6 +111,7 @@ record MTComposition (mtm : MTMode) (mtμ : MTModality mtm) : Set₁ where
 
     ⟦ⓜ⟧-non-triv-sound : ∀ {m n o} (μ : NonTrivModality n o) (κ : NonTrivModality m n) →
                          ⟦ μ ⓜnon-triv κ ⟧mod ≅ᵈ ⟦ μ ⟧non-triv-mod DRA.ⓓ ⟦ κ ⟧non-triv-mod
+      -- ^ Semantically, the composition of modalities should be equivalent to the composition of DRAs.
 
   _ⓜ_ : ∀ {m n o} → Modality n o → Modality m n → Modality m o
   μ   ⓜ 𝟙 = μ
@@ -102,6 +123,9 @@ record MTComposition (mtm : MTMode) (mtμ : MTModality mtm) : Set₁ where
   ⟦ⓜ⟧-sound 𝟙     (‵ κ) = symᵈ (𝟙-unitˡ _)
   ⟦ⓜ⟧-sound (‵ μ) (‵ κ) = ⟦ⓜ⟧-non-triv-sound μ κ
 
+
+--------------------------------------------------
+-- Associativity of modality composition
 
 record MTCompositionLaws (mtm : MTMode) (mtμ : MTModality mtm) (mtc : MTComposition mtm mtμ) : Set where
   no-eta-equality
@@ -128,6 +152,9 @@ record MTCompositionLaws (mtm : MTMode) (mtμ : MTModality mtm) (mtc : MTComposi
   mod-assoc {μ = ‵ μ} {ρ = ‵ ρ} (‵ κ) = mod-non-triv-assoc μ ρ κ
 
 
+--------------------------------------------------
+-- Two-cells and corresponding operations
+
 record MTTwoCell (mtm : MTMode) (mtμ : MTModality mtm) (mtc : MTComposition mtm mtμ) : Set₁ where
   no-eta-equality
 
@@ -139,13 +166,19 @@ record MTTwoCell (mtm : MTMode) (mtμ : MTModality mtm) (mtc : MTComposition mtm
   infixl 5 _ⓣ-hor_
   field
     TwoCell : ∀ {m n} (μ ρ : Modality m n) → Set
+      -- ^ Type of two-cells from μ to ρ
     id-cell : ∀ {m n} {μ : Modality m n} → TwoCell μ μ
+      -- ^ The identity two-cell
     _ⓣ-vert_ : ∀ {m n} {μ ρ κ : Modality m n} → TwoCell ρ κ → TwoCell μ ρ → TwoCell μ κ
+      -- ^ Vertical composition of two-cells
     _ⓣ-hor_ : ∀ {m n o} {μ1 ρ1 : Modality n o} {μ2 ρ2 : Modality m n} →
               TwoCell μ1 ρ1 → TwoCell μ2 ρ2 → TwoCell (μ1 ⓜ μ2) (ρ1 ⓜ ρ2)
+      -- ^ Horizontal composition of two-cells
     two-cell-eq? : ∀ {m n} {μ ρ : Modality m n} (α β : TwoCell μ ρ) → Maybe (α ≡ β)
+      -- ^ Semi-decision procedure for propositional equality of two-cells
 
     ⟦_⟧two-cell : ∀ {m n} {μ κ : Modality m n} → TwoCell μ κ → DRA.TwoCell ⟦ μ ⟧mod ⟦ κ ⟧mod
+      -- ^ Interpretation of two-cells as semantic two-cells between DRAs
 
   eq-cell : ∀ {m n} {μ ρ : Modality m n} → μ ≡ ρ → TwoCell μ ρ
   eq-cell refl = id-cell
@@ -153,6 +186,15 @@ record MTTwoCell (mtm : MTMode) (mtμ : MTModality mtm) (mtc : MTComposition mtm
   _≟cell_ : {m n : Mode} {μ κ : Modality m n} (α β : TwoCell μ κ) → PCM (α ≡ β)
   α ≟cell β = from-maybe "Two-cells are not equal." (two-cell-eq? α β)
 
+
+--------------------------------------------------
+-- Two-cell laws
+-- In fact, we have a 2-category of modes, modalities and 2-cells. The
+-- interpretation function ⟦_⟧ should produce a pseudofunctor from
+-- this 2-category to the 2-category of base categories, DRAs and
+-- semantic two-cells. The laws below are some of the pseudofunctor
+-- laws (but only those that are needed in the development of
+-- BiSikkel).
 
 record MTTwoCellLaws
   (mtm : MTMode)
@@ -171,9 +213,6 @@ record MTTwoCellLaws
   open MTTwoCell mt2
 
   field
-    -- TODO: add comment that we are constructing a pseudofunctor from
-    -- the mode theory to the 2-category of base categories and DRAs.
-    -- (and possibly find better name for ⟦ⓜ⟧-sound)
     ⟦id-cell⟧-sound : ∀ {m n} {μ : Modality m n} → ⟦ id-cell {μ = μ} ⟧two-cell DRA.≅ᵗᶜ DRA.id-cell
     ⟦ⓣ-vert⟧-sound : ∀ {m n} {μ κ ρ : Modality m n}
                      (β : TwoCell κ ρ) (α : TwoCell μ κ) →
@@ -192,6 +231,9 @@ record MTTwoCellLaws
                    DRA.ⓣ-vert (from (⟦ⓜ⟧-sound μ ρ) DRA.ⓣ-hor DRA.id-cell))
                    DRA.ⓣ-vert from (⟦ⓜ⟧-sound (μ ⓜ ρ) κ)
 
+
+--------------------------------------------------
+-- The final mode theory record
 
 record ModeTheory : Set₁ where
   no-eta-equality

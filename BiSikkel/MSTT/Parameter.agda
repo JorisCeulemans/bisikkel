@@ -1,3 +1,7 @@
+--------------------------------------------------
+-- A parameter containing all information to instantiate MSTT
+--------------------------------------------------
+
 module BiSikkel.MSTT.Parameter where
 
 open import Data.String

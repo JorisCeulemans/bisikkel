@@ -1,3 +1,7 @@
+--------------------------------------------------
+-- Interpretation of types and contexts in a presheaf model
+--------------------------------------------------
+
 open import BiSikkel.MSTT.Parameter.ModeTheory
 open import BiSikkel.MSTT.Parameter.TypeExtension using (TyExt)
 

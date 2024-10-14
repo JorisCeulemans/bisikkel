@@ -114,7 +114,11 @@ module RenSubSemantics
   ⟦ _∷ᵃ_/_ {μ = μ} {T = T} σ v x ⟧arensub =
     ⟦ σ ⟧arensub M.,cl⟨ ty-closed-natural ⟨ μ ∣ T ⟩ ⟩ (dra-intro ⟦ μ ⟧mod ⟦ v ⟧rensubdata)
 
-  -- TODO: commentaar
+  -- Note that there is an extra case for `id ⊚a τᵃ ` so that the
+  -- interpretation of a rensub consisting of at least one atomic
+  -- rensub does not have the semantic identity substitution
+  -- post-composed (which is a left unit according to _≅ˢ_ but not to
+  -- Agda's definitional equality).
   ⟦_⟧rensub : RenSub Γ Δ → (⟦ Γ ⟧ctx M.⇒ ⟦ Δ ⟧ctx)
   ⟦ id ⟧rensub = M.id-subst _
   ⟦ id ⊚a τᵃ ⟧rensub = ⟦ τᵃ ⟧arensub
