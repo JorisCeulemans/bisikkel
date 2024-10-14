@@ -480,11 +480,6 @@ instance
   extracted-tm {{snd-extractable {p = p}}} γ = proj₂ (extract-tm p γ)
   extract-tm-semtm {{snd-extractable {p = p}}} γ = cong proj₂ (extract-tm-semtm {t = p} γ)
 
-
-global-extract-prim : {T : Ty ★} {{_ : ExtractableTy T}} (t : Tm ◇ T) →
-                      extract-ty T
-global-extract-prim {T} t = extract-semtm {Γ = ◇} {T = T} ⟦ t ⟧tm tt
-
 global-extract : {Γ : Ctx ★} {{_ : ExtractableCtx Γ}}
                  {T : Ty ★} {{_ : ExtractableTy T}} (t : Tm ◇ T) →
                  extract-ctx Γ → extract-ty T
@@ -510,5 +505,5 @@ instance
                            {T : Ty ★} {{_ : ExtractableTy T}}
                            {def-name : DefName} {t : Tm ◇ T} →
                            ExtractableTm {Γ = Γ} (global-def def-name {t})
-  extracted-tm {{global-def-extractable {Γ} {T = T} {t = t}}} γ = global-extract-prim t
+  extracted-tm {{global-def-extractable {Γ} {T = T} {t = t}}} γ = global-extract {Γ} t γ
   extract-tm-semtm {{global-def-extractable {Γ} {T = T} {def-name} {t}}} γ = global-extract-proof {Γ} t γ def-name
