@@ -1,3 +1,8 @@
+--------------------------------------------------
+-- Soundness proofs for some operations manipulating variables
+-- These are mostly used in the soundness proof for substitution
+--------------------------------------------------
+
 open import BiSikkel.MSTT.Parameter.ModeTheory
 open import BiSikkel.MSTT.Parameter.TypeExtension
 open import BiSikkel.MSTT.Parameter.TermExtension

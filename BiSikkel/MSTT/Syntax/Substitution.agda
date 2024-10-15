@@ -372,9 +372,6 @@ module AtomicSubVar where
 
   open AtomicSubDef
 
-  -- TODO: possible performance optimization
-  --   * Instead of immediately applying a renaming, build up 1 renaming in the substitution process and apply it at the end.
-  --     In this way, the number of term traversals is reduced.
   atomic-sub-var' : {Γ Δ : Ctx n} (Λ : LockTele n m) (σ : AtomicSub Γ Δ) →
                     Var x T Δ Λ → Tm (Γ ,ˡᵗ Λ) T
   atomic-sub-var' Λ idᵃ             v         = var-lt Λ v

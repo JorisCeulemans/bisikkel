@@ -1,3 +1,8 @@
+--------------------------------------------------
+-- Soundness proof for renaming and substitution
+-- The main result is that ⟦ t [ σ ]tm ⟧tm is equivalent to ⟦ t ⟧tm M.[ ⟦ σ ⟧rensub ]' (not precise syntax).
+--------------------------------------------------
+
 open import BiSikkel.MSTT.Parameter.ModeTheory
 open import BiSikkel.MSTT.Parameter.TypeExtension using (TyExt)
 open import BiSikkel.MSTT.Parameter.TermExtension using (TmExt)
@@ -36,6 +41,19 @@ private variable
   μ ρ : Modality m n
   x y : Name
 
+
+-- Since the substitution/renaming algorithm for MSTT is built up in
+-- several parts (traversals, atomic rensubs, regular rensubs), the
+-- soundness proof follows the same structure.
+
+--------------------------------------------------
+-- Soundness for term traversals
+-- Given an interpretation of a traversal as a semantic substitution,
+-- and given the soundness for variable application, lifts and locks,
+-- we can deduce soundness of the general term traversal
+-- (traverse-tm-sound). This essentially applies naturality and
+-- congruence of the semantic term constructors used to interpret MSTT
+-- term constructors.
 
 record TravStructSoundness
   {Trav : ∀ {m} → Ctx m → Ctx m → Set}
@@ -133,6 +151,14 @@ record TravStructSoundness
 open TravStructSoundness using (traverse-tm-sound)
 
 
+--------------------------------------------------
+-- The general algorithm for applying atomic/regular rensubs to MSTT
+-- terms is parametrized by a type family representing the data
+-- assigned to variables, together with some extra structure (i.e. a
+-- way to access the data for the last variable in the context and a
+-- way to apply a rensub to a variable). We first prove the soundness
+-- of the algorithm, given the soundness of this extra structure.
+
 record RenSubDataStructureSound
   (V : RenSubData)
   (rensub-struct : RenSubDataStructure V)
@@ -146,10 +172,17 @@ record RenSubDataStructureSound
   field
     newV-sound : ∀ {x m n} {μ : Modality n m} {T : Ty n} {Γ : Ctx m} →
                  dra-elim ⟦ μ ⟧mod (M.ξcl (ty-closed-natural ⟨ μ ∣ T ⟩)) M.≅ᵗᵐ ⟦ newV {x} {μ = μ} {T = T} {Γ = Γ} ⟧rensubdata
+      -- ^ The interpretation of the last variable in a context should
+      --   correspond to the similar operation in the presheaf model.
     atomic-rensub-lookup-var-sound :
       ∀ {x m} {Γ Δ : Ctx m} {T : Ty m} (v : Var x T Δ ◇) (σ : AtomicRenSub Γ Δ) →
       ⟦ v ⟧var M.[ ty-closed-natural T ∣ ⟦ σ ⟧arensub ]cl M.≅ᵗᵐ ⟦ atomic-rensub-lookup-var v σ ⟧tm
+      -- ^ Soundness of applying a rensub to a variable
 
+
+--------------------------------------------------
+-- Soundness of atomic rensubs (provided that the action on variables is sound)
+-- The main result is tm-arensub-sound.
 
 module AtomicRenSubSoundness
   (V : RenSubData)
@@ -208,6 +241,10 @@ module AtomicRenSubSoundness
                      ⟦ t ⟧tm M.[ ty-closed-natural T ∣ ⟦ σ ⟧arensub ]cl M.≅ᵗᵐ ⟦ t [ σ ]tmᵃ ⟧tm
   tm-arensub-sound t σ = traverse-tm-sound AtomicRenSubTravSound t σ
 
+
+--------------------------------------------------
+-- Soundness of regular rensubs (provided that the action on variables is sound)
+-- The main result is tm-rensub-sound.
 
 module RenSubSoundness
   (V : RenSubData)
@@ -303,6 +340,9 @@ module RenSubSoundness
       ⟦ σ ⊚ʳˢ τ ⟧rensub M.⊚ ⟦ τᵃ ⟧arensub ∎
     where open M.≅ˢ-Reasoning
 
+
+--------------------------------------------------
+-- Soundness of the algorithm for applying a two-cell to a variable
 
 module TwoCellSoundness where
   open M.≅ᵗᵐ-Reasoning
@@ -430,6 +470,9 @@ module TwoCellSoundness where
       ⟦ vlocks Ψ (apply-2-cell-var (Θ ++ˡᵗ Λ) (Ψ ++ˡᵗ Λ) (whiskerˡᵗ-right Θ Ψ α) (unvlocks Θ v)) ⟧var ∎
 
 
+--------------------------------------------------
+-- Soundness of the application of atomic renamings to variables
+
 module AtomicRenVarSound where
   open AtomicRenVar
   open SomeVar using (get-var)
@@ -509,6 +552,10 @@ module AtomicRenVarSound where
   RenSubDataStructureSound.newV-sound ren-data-struct-sound {x = x} {μ = μ} {T = T} {Γ = Γ} = vzero-id-sound Γ μ x T
   RenSubDataStructureSound.atomic-rensub-lookup-var-sound ren-data-struct-sound = atomic-ren-var-sound
 
+-- Combining the result above with the general soundness proof for
+-- atomic/regular rensubs, we get the final soundness results for
+-- renamings.
+
 module AtomicRenSoundM = AtomicRenSubSoundness RenData AtomicRenVar.ren-data-struct ren-data-semantics AtomicRenVarSound.ren-data-struct-sound
 
 open AtomicRenSoundM renaming
@@ -534,6 +581,9 @@ open RenSoundM renaming
   using ()
   public
 
+
+--------------------------------------------------
+-- Soundness of the application of atomic substitutions to variables
 
 module AtomicSubVarSound where
   open AtomicSubVar
@@ -657,6 +707,10 @@ module AtomicSubVarSound where
   RenSubDataStructureSound.newV-sound sub-data-struct-sound {x = x} {μ = μ} {T = T} {Γ = Γ} = v0-sound Γ μ x T
   RenSubDataStructureSound.atomic-rensub-lookup-var-sound sub-data-struct-sound = atomic-sub-var-sound
 
+
+-- Again combining the above result with the general soundness proof
+-- for rensubs, we get the final soundness proof for substitutions.
+
 module AtomicSubSoundM = AtomicRenSubSoundness SubData AtomicSubVar.sub-data-struct sub-data-semantics AtomicSubVarSound.sub-data-struct-sound
 
 open AtomicSubSoundM renaming
@@ -682,6 +736,9 @@ open SubSoundM renaming
   using ()
   public
 
+
+--------------------------------------------------
+-- Consequences of the soundness results
 
 lock𝟙-ren-sound : (Γ : Ctx m) → ⟦ lock𝟙-ren {Γ = Γ} ⟧ren M.≅ˢ M.id-subst _
 lock𝟙-ren-sound Γ =

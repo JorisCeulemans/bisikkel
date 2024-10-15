@@ -1,6 +1,5 @@
 --------------------------------------------------
--- Module that re-exports all definitions needed for working with the
---   type theory MSTT (but not interpreting it in a model)
+-- Module that re-exports all definitions of the MSTT syntax
 --------------------------------------------------
 
 open import BiSikkel.MSTT.Parameter.ModeTheory

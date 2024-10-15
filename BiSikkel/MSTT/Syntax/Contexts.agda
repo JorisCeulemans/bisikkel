@@ -33,6 +33,9 @@ private variable
   x y : Name
 
 
+--------------------------------------------------
+-- MSTT Contexts
+
 infixl 6 _,,_∣_∈_ _,lock⟨_⟩
 data Ctx (m : Mode) : Set where
   ◇ : Ctx m
