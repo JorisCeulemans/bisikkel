@@ -1,3 +1,8 @@
+--------------------------------------------------
+-- Definition of a record that can be used to extend an instantiation
+-- of BiSikkel with new bProp constructors
+--------------------------------------------------
+
 open import BiSikkel.MSTT.Parameter.ModeTheory
 open import BiSikkel.MSTT.Parameter.TypeExtension
 open import BiSikkel.MSTT.Parameter.TermExtension using (TmExt)

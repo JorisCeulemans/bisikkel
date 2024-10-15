@@ -1,3 +1,7 @@
+--------------------------------------------------
+-- Parameter for an entire instance of BiSikkel (MSTT + logical framework)
+--------------------------------------------------
+
 module BiSikkel.Parameter where
 
 open import Data.String

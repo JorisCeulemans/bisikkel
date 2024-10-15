@@ -1,3 +1,7 @@
+--------------------------------------------------
+-- Specifying the semantics of new bProp constructors in a presheaf model
+--------------------------------------------------
+
 open import BiSikkel.MSTT.Parameter.ModeTheory
 open import BiSikkel.MSTT.Parameter.TypeExtension
 open import BiSikkel.MSTT.Parameter.TermExtension using (TmExt)
@@ -29,6 +33,11 @@ private variable
   m n : Mode
 
 
+--------------------------------------------------
+-- Definition of a semantic bProp constructor and its properties (naturality and congruence)
+
+-- A SemPropConstructorLocal refers to an MSTT context and not a
+-- semantic context.
 SemPropConstructorLocal : ∀ {m} → List (TmArgInfo m) → List (ArgInfo m) → Ctx m → Set₁
 SemPropConstructorLocal []                   []                   Γ = SemTy ⟦ Γ ⟧ctx
 SemPropConstructorLocal []                   (bp-info ∷ bp-infos) Γ =
@@ -80,6 +89,9 @@ SemPropConstructorCong : {tmarginfos : List (TmArgInfo m)} {bparginfos : List (A
 SemPropConstructorCong {m = m} F = {Γ : Ctx m} → SemPropConstructorLocalCong (F {Γ})
 
 
+--------------------------------------------------
+-- Record collecting all information about semantics for new bProp constructors
+
 record bPropExtSem (𝒷 : bPropExt) : Set₁ where
   no-eta-equality
   field
@@ -88,6 +100,10 @@ record bPropExtSem (𝒷 : bPropExt) : Set₁ where
     ⟦⟧bp-code-natural : ∀ {m} (c : bPropExtCode 𝒷 m) → SemPropConstructorNatural ⟦ c ⟧bp-code
     ⟦⟧bp-code-cong : ∀ {m} (c : bPropExtCode 𝒷 m) → SemPropConstructorCong ⟦ c ⟧bp-code
 
+
+--------------------------------------------------
+-- Helper proofs for naturality and congruence when applied in the
+-- interpretation of actual bProps
 
 SemProps : List (ArgInfo m) → Ctx m → Set₁
 SemProps []                   Γ = ⊤

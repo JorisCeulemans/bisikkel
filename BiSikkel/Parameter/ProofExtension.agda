@@ -1,3 +1,7 @@
+--------------------------------------------------
+-- Specification of new inference rules to construct proofs
+--------------------------------------------------
+
 open import Data.String
 open import BiSikkel.MSTT.Parameter
 open import BiSikkel.Parameter.bPropExtension
@@ -25,6 +29,10 @@ private variable
   m : Mode
 
 
+-- When adding new proof constructors, we should specify how such
+-- proofs will be checked. In the process of checking a new proof, we
+-- can check all subproofs in any proof context that has the correct
+-- shape and against any bProp. This is encoded in the type below.
 ProofCheckExt : (infos : List (ArgInfo m)) (pfarg-names : ArgBoundNames infos)
                 (Ξ : ProofCtx m) (φ : bProp (to-ctx Ξ)) →
                 Set
@@ -39,12 +47,17 @@ record ProofExt : Set₁ where
   no-eta-equality
   field
     ProofExtCode : Mode → Set
+      -- ^ Universe of codes for new inference rules, indexed by the mode the proof will live at
     pf-code-tmarg-infos : (c : ProofExtCode m) → List (TmArgInfo m)
+      -- ^ Every proof can have a number of term arguments
     pf-code-bparg-infos : (c : ProofExtCode m) → List (ArgInfo m)
+      -- ^ Every proof can have a number of bProp arguments
     pf-code-pfarg-infos : (c : ProofExtCode m) → List (ArgInfo m)
+      -- ^ Every proof can have a number of proof arguments, i.e. premises in the inference rule
 
     pf-code-check : (c : ProofExtCode m) (Ξ : ProofCtx m) (φ : bProp (to-ctx Ξ))
                     {tmarg-names : TmArgBoundNames (pf-code-tmarg-infos c)} (tmargs : ExtTmArgs (pf-code-tmarg-infos c) tmarg-names (to-ctx Ξ))
                     {bparg-names : ArgBoundNames (pf-code-bparg-infos c)} (bpargs : ExtBPArgs (pf-code-bparg-infos c) bparg-names (to-ctx Ξ))
                     (pfarg-names : ArgBoundNames (pf-code-pfarg-infos c)) →
                     ProofCheckExt (pf-code-pfarg-infos c) pfarg-names Ξ φ
+      -- ^ Given a proof, we need to specify how it should be checked.
