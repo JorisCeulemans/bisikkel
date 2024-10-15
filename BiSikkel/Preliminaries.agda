@@ -1,4 +1,6 @@
--- Definition of some operations which are not in the standard library
+--------------------------------------------------
+-- Axioms & some definitions that are not included in the standard library
+--------------------------------------------------
 
 module BiSikkel.Preliminaries where
 
@@ -18,16 +20,20 @@ private
 
 
 --------------------------------------------------
--- Some results about propositional equality
+-- Axioms used in BiSikkel
 
--- Should not be used except in Types.Functions and CwF-Structure.Terms.
+-- Function extensionality (both for normal and implicit functions)
 postulate
   funext : ∀ {ℓ ℓ'} → Extensionality ℓ ℓ'
   funextI : ∀ {ℓ ℓ'} → ExtensionalityImplicit ℓ ℓ'
 
--- Shouldn't be used globally anymore, for the moment only in Types.Functions and CwF-Structure.Terms.
+-- Strictly speaking not an axiom (uip is enabled by default in Agda)
 uip : ∀ {a} {A : Set a} → UIP A
 uip refl refl = refl
+
+
+--------------------------------------------------
+-- Some results about propositional equality
 
 cong₂-d : ∀ {a b c} {A : Set a} {B : A → Set b} {C : Set c}
           (f : (x : A) → B x → C)
@@ -62,6 +68,8 @@ from-to-Σ-eq1 {ex = refl} refl = refl
 
 --------------------------------------------------
 -- Extension of syntax for reasoning combinators to include the ones for ≅
+-- They are used for the various forms of equivalence in the presheaf
+-- model formalization.
 
 module ≅-syntax
   {R : REL A B ℓ₂}
