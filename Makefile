@@ -8,3 +8,4 @@ Everything.agda:
 .PHONY: clean
 clean:
 	rm -r _build/
+	rm Everything.agda
