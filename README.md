@@ -4,15 +4,48 @@ This text provides instructions to use the Agda library called BiSikkel, as well
 
 ## 1. Download, installation, and sanity-testing
 
-***Instructions about VM***
+This artifact is an Ubuntu 20.04 virtual machine containing an installation of Agda 2.7.0.1, the Agda standard library (version 2.1.1) and the BiSikkel library.
 
-The BiSikkel library has the following dependencies:
+### 1.1 Downloading and running the VM
 
-* The Agda programming language: tested with version 2.6.4.1.
-  Installation instructions for Agda can be found [here]([Installation &mdash; Agda 2.6.4.1 documentation](https://agda.readthedocs.io/en/v2.6.4.1/getting-started/installation.html)).
+**Downloading**: Begin by downloading the latest version of the virtual machine.
 
-* The Agda standard library: tested with version 2.0.
-  Installation instructions for the standard library can be found [here]([agda-stdlib/doc/installation-guide.md at master · agda/agda-stdlib · GitHub](https://github.com/agda/agda-stdlib/blob/master/doc/installation-guide.md)).
+**VirtualBox**: We used [VirtualBox](https://www.virtualbox.org/wiki/Downloads) v7.1.4 to prepare this artifact. The artifact has been prepared on a system running Ubuntu desktop 20.04.
+
+**Importing the VM**: We follow the steps described in the VirtualBox [user manual](https://www.virtualbox.org/manual/UserManual.html#ovf-import-appliance). Go to `File > Import appliance`. Select the VM file `<...>/popl25-artifact30.ova`. An "Appliance settings" window is shown. The default values should be fine; in particular:
+
+| Option                   | Value                                          |
+| ------------------------ | ---------------------------------------------- |
+| CPU (thread)             | 2                                              |
+| RAM                      | 4096MB                                         |
+| MAC address policy       | Include only NAT network adapter MAC addresses |
+| Import hard drive as VDI | ticked box                                     |
+
+Click on Finish. The VM should start importing (this could take a minute).
+
+**Running the VM**: In VirtualBox, right click "POPL25 Artifact 30", and click `Start > Normal Start`.
+
+### 1.2 Starting Agda, Emacs and BiSikkel
+
+**First**: You can change your keyboard layout in `Settings (upper right corner) > Region & Language > Input Sources`. Your linux username is `vboxuser` and your password is `password`. You can open a terminal by hitting `Ctrl-Alt-T`.
+
+**Agda & Emacs**: You can make sure that Agda is installed by issuing the command `agda --version`, which should report the Agda version 2.7.0.1. In order to make sure that Emacs and the Agda standard library are properly installed, open a terminal, go to `~/Desktop` and type `emacs test.agda`. This will open in Emacs a test Agda file that imports a module from the standard library. Load it by pressing `C-c C-l` (see Agda emacs [commands](https://agda.readthedocs.io/en/v2.6.3/tools/emacs-mode.html)). Everything works properly if the code has become colored and `*All Done*` appears at the bottom of the window.
+
+**BiSikkel**: The BiSikkel library is located in `~/Desktop/bisikkel/`. In order to get the latest version, you can navigate there in a terminal and issue `git pull`. The simplest way to check that BiSikkel runs properly is to type-check it entirely. This can be done by opening a terminal, going to `~/Desktop/bisikkel/` and then running `make clean` followed by `make all` (see also Section 4.1 of this document). One will see that Agda starts type-checking all modules and it should not report any error or warning. This may take about 5 minutes.
+
+**Remark about navigating files in Emacs**: In this document we will recommend to inspect many files of the BiSikkel library in Emacs and make Agda load (i.e. type-check) these files. This can be done as follows: open a terminal and go to `~/Desktop/bisikkel/`, then type `emacs &`. The command `C-x C-f` now lets you visit different files. When a file is opened, you can make Agda load it by typing `C-c C-l`.
+
+### 1.3 (Optional) Manual installation of BiSikkel
+
+It is also possible to manually install the BiSikkel library. This requires a working installation of Agda and of the Agda standard library. BiSikkel has been tested with the following combinations:
+
+* Agda version 2.6.4.1 and Agda standard library version 2.0.
+
+* Agda version 2.7.0.1 and Agda standard library version 2.1.1.
+
+See [here](https://agda.readthedocs.io/en/v2.7.0.1/getting-started/installation.html) for installation instructions for Agda, and [here](https://github.com/agda/agda-stdlib/blob/master/doc/installation-guide.md) for installation instructions for the standard library.
+
+The BiSikkel source files are available [here](https://github.com/JorisCeulemans/bisikkel). If you want to integrate BiSikkel in another Agda project, add the following line to your Agda libraries file (see [here](https://agda.readthedocs.io/en/v2.7.0.1/tools/package-system.html) for instructions where this is located): `$Path to local BiSikkel installation/bisikkel.agda-lib`. A project can now import BiSikkel modules by adding `bisikkel` as a dependency in its `.agda-lib` file. See also Section 6 of this document for instructions how to create your own instance of BiSikkel (i.e. specify a new mode theory, etc.).
 
 ## 2. List of claims (high-level)
 
@@ -33,9 +66,9 @@ In this section, we justify the claims made in the *contributions* section of th
 
 In this section we discuss all definitions, results and code fragments that are included in the paper and we indicate where they can be found in the code base. Any differences between the paper and the library code will also be discussed. Like in the previous section, evaluation entails loading the Agda file without errors/warnings/remaining goals, and verifying the type signature of the mentioned functions.
 
-#### Section 2: A Brief Overview of Sikkel
+### Section 2: A Brief Overview of Sikkel
 
-##### Section 2.1: Syntactic Layer: Multimode Simple Type Theory (MSTT)
+#### Section 2.1: Syntactic Layer: Multimode Simple Type Theory (MSTT)
 
 **Mode theory**: The mode theory as described on page 4 is implemented in `BiSikkel/MSTT/Parameter/ModeTheory.agda`. Note that a mode theory is a record of type `ModeTheory`, itself consisting of different other records. As already mentioned in footnote 5, the implementation of a mode theory is more complicated than described in the paper: when constructing a mode theory, one should only describe the non-trivial modes and modalities. The trivial mode `★` and the unit modality `𝟙` are automatically added. This has the advantage that some category laws hold strictly (i.e. up to Agda definitional equality). Furthermore, a mode theory in BiSikkel should also specify how modes, modalities, etc. are interpreted in the semantic layer as base categories, DRAs, etc. Finally, some soundness proofs of this interpretation should also be provided (e.g. the interpretation of a composite modality should be equivalent to the DRA composition of the modalities' interpretations).
 
@@ -45,7 +78,7 @@ In this section we discuss all definitions, results and code fragments that are 
 
 **Terms (intrinsically typed)**: The data type `Tm` is defined in `BiSikkel/MSTT/Syntax/Terms.agda`. One can verify that the constructors corresponding to the typing rules in Figure 4 do have a type signature that indeed encodes these inference rules (types and contexts of the conclusion and premises in the figure match those of the result and arguments of the constructor). Note that the modal elimination principle is called `mod-elim`, the let-syntax is only introduced on line 150. Note furthermore that the representation of variables is more complicated than in the paper (constructor `var'`): the De Bruijn index is represented as a value of type `Var x T Γ ◇`.  The constructors of this `Var` data type allow us to traverse `Γ` from the back to the point where we reach the required variable, and then the appropriate two-cell must be provided. The function `svar` is implemented on line 247.
 
-##### Section 2.2: Semantic Layer: Presheaf Models
+#### Section 2.2: Semantic Layer: Presheaf Models
 
 The formalization of presheaf models is located in `BiSikkel/Model/`. Note that this is a quite extensive development, and it is not really necessary to inspect it in order to use the library to write modal programs/proofs. Of course, one should understand more details when implementing a new instance of BiSikkel.
 
@@ -55,11 +88,11 @@ The interpretation functions for types and contexts can be found in `BiSikkel/MS
 
 The interpretation function for terms is `⟦_⟧tm` in `BiSikkel/MSTT/Interpretation.agda`.
 
-##### Section 2.3: Extraction to the Meta-level
+#### Section 2.3: Extraction to the Meta-level
 
 The original extraction mechanism from Sikkel is not included in BiSikkel because we completely reimplemented it. For MSTT, the mechanism can be found in `BiSikkel/MSTT/Extraction.agda`.
 
-#### Section 3: Why a Dedicated Logical Framework?
+### Section 3: Why a Dedicated Logical Framework?
 
 **Guarded recursion mode theory (Figure 5a)**: The mode theory for guarded recursive type theory is implemented in `Applications/GuardedRecursion/BiSikkel/ModeTheory.agda`. Compared to Figure 5a, the implementation does not only contain the 3 modalities in the figure but also all of their compositions (taking the equalities in the figure into account). Similarly the data type of two-cells (`TwoCell`) also contains the horizontal and vertical compositions arising from the trivial cell and the cells shown in the figure. The semantics of the modalities for guarded recursion are located in `Applications/GuardedRecursion/Model/Modalities/`.
 
@@ -67,15 +100,15 @@ The original extraction mechanism from Sikkel is not included in BiSikkel becaus
 
 **Implementation of guarded stream functions (Figure 6)**: The functions from Figure 6 are implemented in `Applications/GuardedRecursion/Examples/Streams.agda`. The rest of that file contains some more examples of guarded streams, and also of standard streams and extraction as described on lines 416-421 of the paper.
 
-#### Section 4: µLF, a Proof System for MSTT
+### Section 4: µLF, a Proof System for MSTT
 
-##### Section 4.1: Propositions & Proof Contexts
+#### Section 4.1: Propositions & Proof Contexts
 
 **Propositions**: The data type `bProp` from Figure 7a is defined in `BiSikkel/LogicalFramework/bProp/Syntax.agda`. It does include an extra constructor `ext` that can be used to extend BiSikkel with custom proposition connectives for specific applications. The definition of "non-modal" implication `⊃` can be found on line 148. It uses a key renaming to introduce the (trivial) lock required in the domain proposition for the constructor `⟨_∣_⟩⊃_`.
 
 **Proof contexts**: The data type `ProofCtx` and function `to-ctx` from Figure 7b are defined in `BiSikkel/LogicalFramework/Proof/Context.agda`.
 
-##### Section 4.2: Axioms & Inference Rules
+#### Section 4.2: Axioms & Inference Rules
 
 **Substitution**: As in the paper, we defer details about substitution to Section 5.4. The definition of the type `Sub` together with the functions `_[_]tm` and `_[_]bprop` can be found in `BiSikkel/MSTT/Syntax/Substitution.agda`. Also the definitions of `_/_` and `_//_` are located on lines 445 and 448 respectively in that file.
 
@@ -93,7 +126,7 @@ The original extraction mechanism from Sikkel is not included in BiSikkel becaus
 
 * There are proof constructors `hole` for inserting a hole in a proof and `ext` for extending the BiSikkel proof system with new inference rules. These do not correspond to a rule in Figure 9.
 
-##### Section 4.3: Continuing the g-iterate Example
+#### Section 4.3: Continuing the g-iterate Example
 
 **New β-equivalence and proof rules for guarded recursion (Figure 10)**: The implementation of rule TmEq-GStream-Head in the normalizer can be found on line 52 of `Applications/GuardedRecursion/BiSikkel/Normalization.agda`. Similarly TmEq-GStream-Tail is located on line 62 of that file. The proof checker implementations for the rules Prf-TmLöb-Beta and Prf-Löb are realized via the function `pf-code-check` in `Applications/GuardedRecursion/BiSikkel/ProofExtension.agda`.
 
@@ -103,7 +136,7 @@ The original extraction mechanism from Sikkel is not included in BiSikkel becaus
 
 **Relaing iterate and iterate'**: As stated on lines 841-845 in the paper, we can prove a similar result relating `iterate` and `iterate'` for standard streams in BiSikkel. This is proven in `iterate-iterate'-proof` in `Applications/GuardedRecursion/Examples/Proofs.agda`. Contrary to the claim in the paper, extraction does work but as explained in the code, it takes too much time to compare the inferred type of the extracted result to the expected Agda type. This will be made clear in the revised version of the paper.
 
-##### Section 4.4: Another Example: Unary Parametricity
+#### Section 4.4: Another Example: Unary Parametricity
 
 Contrary to the claim in the paper on line 853, this example is now finished.
 
@@ -111,13 +144,13 @@ The definition of the mode theory is located in `Applications/UnaryParametricity
 
 We can then construct the proof claimed in the paper in the file `Applications/UnaryParametricity/BooleanExample.agda` and we refer to the comments in the Agda code there. Note that similar to guarded recursion, proof extraction works but comparing the resulting type to the expected Agda type is very slow. We will mention this in the revised version of the paper.
 
-#### Section 5: Implementation of µLF in Agda
+### Section 5: Implementation of µLF in Agda
 
-##### Section 5.1: Agda Representation of Proofs
+#### Section 5.1: Agda Representation of Proofs
 
 The definition of the data type `Proof` (i.e. the extrinsically typed representation) can be found in `BiSikkel/LogicalFramework/Proof/Definition.agda`.
 
-##### Section 5.2: The Proof Checker
+#### Section 5.2: The Proof Checker
 
 **Interpretation of propositions and proof contexts**: The function `⟦_⟧bprop` interpreting propositions in the presheaf model, is located in `BiSikkel/LogicalFramework/bProp/Interpretation.agda`. For the definitions of `⟦_⟧pctx` interpreting proof contexts and `to-ctx-subst` providing a semantic substitution, we refer to lines 135-146 of `BiSikkel/LogicalFramework/Proof/Context.agda`.
 
@@ -127,13 +160,13 @@ The definition of the data type `Proof` (i.e. the extrinsically typed representa
 
 **The proof checker**: The actual implementation of the proof checker can be found in `BiSikkel/LogicalFramework/Proof/Checker.agda`. Soundness of all the cases for the proof checker is proved in `BiSikkel/LogicalFramework/Proof/Checker/Soundness.agda`.
 
-##### Section 5.3: Proof Extraction
+#### Section 5.3: Proof Extraction
 
 Extraction of MSTT contexts, types and terms is defined in `BiSikkel/MSTT/Extraction.agda`. Instances of extractability for many of the MSTT standard type and term constructors can also be found there. Extraction of propositions (as well as many instances) is defined in `BiSikkel/LogicalFramework/bProp/Extraction.agda`. Finally, proof extraction is implemented in `BiSikkel/LogicalFramework/Proof/Extraction.agda`.
 
 The proof of commutativity of natural number addition is located in `Applications/NonModal/Examples.agda`. The illustration of the extraction mechanism for this example can be found on line 166 of that file.
 
-##### Section 5.4: Substitution and (Fueled) Normalization for MSTT
+#### Section 5.4: Substitution and (Fueled) Normalization for MSTT
 
 **Substitution**: The substitution algorithm is implemented in `BiSikkel/MSTT/Syntax/Substitution.agda`. In order to capture the behaviour of pushing a substitution/renaming through term constructors until a variable is reached, we also introduce the concept of term traversals there. The soundness of the substitution algorithm with respect to the presheaf model of MSTT is proven in `BiSikkel/MSTT/Soundness/Substitution.agda`. This proof largely follows the structure of the implementation of the substitution algorithm (traversals, atomic and regular rensubs, etc.)
 
@@ -141,11 +174,11 @@ The proof of commutativity of natural number addition is located in `Application
 
 ## 4. Further evaluation instructions
 
-#### 4.1 Checking Everything
+### 4.1 Checking Everything
 
 Apart from inspecting all aspects described in the previous sections, it is important to verify that the entire BiSikkel library can be type-checked by Agda without producing errors or warnings (a warning would be issued e.g. when there are goals that still need to be solved). For this purpose, one can go to the root of the BiSikkel project and make sure that the file `Everything.agda` is not present. Then running `make all` will generate an Agda file `Everything.agda` that imports all Agda files contained in BiSikkel and subsequently let Agda type-check it via `agda -i . Everything.agda` (this last command is executed by make, we show it here to illustrate that warnings are not suppressed).
 
-#### 4.2 Postulates
+### 4.2 Postulates
 
 By running `rgrep postulate .` in the BiSikkel project root, one can verify that there are only 2 files where an axiom is postulated:
 
@@ -155,7 +188,7 @@ By running `rgrep postulate .` in the BiSikkel project root, one can verify that
 
 Both function extensionality and stream extensionality are uncontroversial axioms which are regularly added to standard Martin-Löf type theory.
 
-#### 4.3 Command-line Options and Pragmas
+### 4.3 Command-line Options and Pragmas
 
 By running `rgrep OPTIONS .` in the BiSikkel project root, one can see that the only command-line option used is the `--guardedness` flag which is needed to provide a coinductive defintion of Agda streams. The use of this flag is also restricted to the guarded recursion instance.
 
