@@ -4,12 +4,13 @@
 
 module Applications.GuardedRecursion.BiSikkel.ModeTheory where
 
-open import Data.Maybe
+open import Data.Maybe using (Maybe; just; nothing; map)
 open import Data.Nat
 open import Data.Nat.Properties
   using (+-identityʳ; +-assoc; +-suc; ≤-refl; ≤-trans; +-mono-≤; m≤n⇒m≤1+n; m≤n⇒m≤n+o; m≤n⇒m≤o+n; ≤-irrelevant)
   renaming (_≟_ to _≟nat_)
 open import Relation.Binary.PropositionalEquality
+open import Relation.Nullary.Decidable using (Dec; yes; no)
 
 open import BiSikkel.Model.BaseCategory as M hiding (ω; ★)
 import BiSikkel.Model.CwF-Structure as M
@@ -18,6 +19,14 @@ import Applications.GuardedRecursion.Model.Modalities as M
 
 open import BiSikkel.MSTT.Parameter.ModeTheory
 
+
+
+--------------------------------------------------
+-- Operation to make BiSikkel compatible with standard library 2.1
+
+decToMaybe : ∀ {ℓ} {A : Set ℓ} → Dec A → Maybe A
+decToMaybe (yes a) = just a
+decToMaybe (no  _) = nothing
 
 
 --------------------------------------------------
