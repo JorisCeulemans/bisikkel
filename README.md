@@ -198,7 +198,7 @@ The only pragma that is used is an innocent display pragma in `BiSikkel/MSTT/Syn
 
 * `BiSikkel/` contains the reusable part of the BiSikkel library and is intended to be instantiated with different mode theories.
   
-  * `BiSikkel/Model/` contains the semantic layer (i.e. Presheaf Models) of Figure 2 in the paper. It is a reworked version of the formalization of presheaf models of type theory from the [Sikkel library]([Release v1.0 · JorisCeulemans/sikkel · GitHub](https://github.com/JorisCeulemans/sikkel/releases/tag/v1.0)).
+  * `BiSikkel/Model/` contains the semantic layer (i.e. Presheaf Models) of Figure 2 in the paper. It is a reworked version of the formalization of presheaf models of type theory from the [Sikkel library](https://github.com/JorisCeulemans/sikkel/releases/tag/v1.0).
   
   * `BiSikkel/MSTT/` contains the intrinsically typed formalization of MSTT: definition of syntax, interpretation in a presheaf model, substitution algorithm, fueled normalization function, ...
     
