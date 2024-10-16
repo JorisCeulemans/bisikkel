@@ -18,7 +18,7 @@ open import BiSikkel.LogicalFramework.Proof.CheckingMonad
 --------------------------------------------------
 -- Modes
 -- Note that a user must only specify mode different from the trivial
--- mode ★. The latter is automatically included.
+-- mode ★. The latter is autmatically included.
 
 record MTMode : Set₁ where
   no-eta-equality

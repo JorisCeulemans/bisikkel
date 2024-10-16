@@ -32,20 +32,6 @@ private variable
   Λ : LockTele m n
 
 
--- The implementation of the substitution algorithm is structured as follows:
---   * First, we implement general term traversals, which will push substitutions
---     or renamings through term constructors until a variable is reached.
---     (`traverse-tm`)
---   * Then, we define a general notion of rensub, parametrized by the data that gets
---     assigned to variables (variables in case of renamings, terms in case of substitutions).
---     Both are split into atomic and regular rensubs to avoid termination issues.
---     We implement the action of atomic and regular rensubs, but postpone their action on variables.
---     (_[_]tmᵃ and _[_]tmʳˢ)
---   * Finally, we specify how atomic renamings and substitutions act on variables (in
---     modules AtomicRenVar and AtomicSubVar respectively). We can then instantiate the
---     module from the previous point to obtain a renaming function _[_]ʳ and substitution
---     function _[_]ˢ.
-
 --------------------------------------------------
 -- Traversals of MSTT terms
 

@@ -132,7 +132,7 @@ data Proof where
     -- would fail. Users are intended to use bool-induction defined below.
   nat-induction' : {Γ Δ : Ctx m} {x : Name} (hyp : String) → Δ Ag.≡ (Γ ,, x ∈ Nat') →
                    Proof Γ →  -- Ξ ⊢ φ [ zero / x ]bprop
-                   Proof Δ     -- Ξ ,,ᵛ n ∈ Nat' ,,ᵇ 𝟙 ∣ hyp ∈ φ ⊢ φ [ suc n // n ]bprop
+                   Proof Δ     -- Ξ ,,ᵛ n ∈ Nat' ,,ᵇ 𝟙 ∣ hyp ∈ φ ⊢ φ [ suc n / n ]bprop
                    →
                    Proof Δ     -- Ξ ,,ᵛ n ∈ Nat' ⊢ φ
     -- ^ Same remark as for bool-induction'.
