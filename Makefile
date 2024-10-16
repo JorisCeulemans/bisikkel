@@ -7,5 +7,5 @@ Everything.agda:
 
 .PHONY: clean
 clean:
-	rm -r _build/
-	rm Everything.agda
+	rm -rf _build/
+	rm -f Everything.agda
