@@ -1,5 +1,6 @@
 all: Everything.agda
 	agda -i . Everything.agda
+.PHONY: all
 
 Everything.agda:
 	echo "{-# OPTIONS --guardedness #-}\n--The guardedness option is only necessary for the guarded recursion application.\n\nmodule Everything where\n" > Everything.agda
